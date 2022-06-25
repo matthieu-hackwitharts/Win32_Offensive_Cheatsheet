@@ -29,7 +29,9 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [CreateRemoteThread injection ⏳]()
 - [Process Hollowing ⏳]()
-
+- [APC technique⏳]()
+ - [Early Bird ⏳]()
+- [Reflective DLL Injection ⏳]()
 
 **Hooking techniques**
 - [Inline hooking ⏳]()
@@ -38,17 +40,44 @@ Win32 and Kernel abusing techniques for pentesters
 
 **AV Bypass techniques (Signature based)**
 
+- [Call and Strings obfuscation ⏳]()
+- [Manual function resolves ⏳]() 
 
 
 **EDR/Endpoint bypass**
 
+- [Direct syscall ⏳]()
+- [High level languages ⏳]()
+- [Patch inline hooking ⏳]()
+- [Patch ntdll hooking ⏳]()
+- [Detect hooks ⏳]()
+- [Patch ETW ⏳]()
+- [Sandbox bypass ⏳]()
+- [Debugging Bypass ⏳]()
+- [Patch Kernel callbacks ⏳]()
+- [VirtualProtect techniques ⏳]()
+
 
 **Driver Programming basics**
 
+- [General concepts ⏳]()
+- [Driver entry ⏳]()
+- [IO (Input/Output) ⏳]()
+- [Symlinks ⏳]()
+- [Communicate with driver ⏳]()
+- [Client code to kernel code ⏳]()
+- [Driver signing (Microsoft) ⏳]()
+
 **Offensive Driver Programming**
 
+- [Process protection removing ⏳]()
+- [Patch kernel callback (dev way) ⏳]()
+- [Integrity and privileges levels ⏳]()
+- [Enable SeDebug privilege ⏳]()
 
 **Using Win32 API to increase OPSEC**
 
-
+- [Persistence ⏳]()
+ - [Scheduled Tasks ⏳]()
+- [Command line spoofing ⏳]()
 
