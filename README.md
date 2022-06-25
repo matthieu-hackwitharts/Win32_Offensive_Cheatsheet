@@ -21,8 +21,8 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [Classic shellcode execution⏳]()
 - [DLL execute ⏳]()
-- [Reflective DLL execution ⏳][)
-- RAW file to PE ⏳]()
+- [Reflective DLL execution ⏳]()
+- [RAW file to PE ⏳]()
 
 
 **Code injection techniques**
