@@ -36,7 +36,19 @@ Win32 and Kernel abusing techniques for pentesters
 - [IAT hooking ⏳]()
 
 
+**AV Bypass techniques (Signature based)**
 
+
+
+**EDR/Endpoint bypass**
+
+
+**Driver Programming basics**
+
+**Offensive Driver Programming**
+
+
+**Using Win32 API to increase OPSEC**
 
 
 
