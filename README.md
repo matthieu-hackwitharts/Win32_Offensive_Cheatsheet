@@ -32,6 +32,15 @@ Win32 and Kernel abusing techniques for pentesters
 - [APC technique⏳]()
  - [Early Bird ⏳]()
 - [Reflective DLL Injection ⏳]()
+- [Dll injection ⏳]()
+- [Process Doppelganging ⏳]()
+- [Fibers ⏳]()
+- [CreateThreadPoolWait ⏳]()
+- [Thread Hijacking ⏳]()
+- [MapView code injection ⏳]()
+- [Module Stomping ⏳]()
+- [Function Stomping ⏳]()
+- [Complete PE injection in remote process ⏳]()
 
 **Hooking techniques**
 - [Inline hooking ⏳]()
@@ -42,6 +51,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [Call and Strings obfuscation ⏳]()
 - [Manual function resolves ⏳]() 
+- [Win32 API Hashing ⏳]()
 
 
 **EDR/Endpoint bypass**
@@ -56,6 +66,10 @@ Win32 and Kernel abusing techniques for pentesters
 - [Debugging Bypass ⏳]()
 - [Patch Kernel callbacks ⏳]()
 - [VirtualProtect techniques ⏳]()
+- [Fresh copy unhook ⏳]()
+- [Hell's Gate ⏳]()
+- [Heaven's Gate ⏳]()
+- [PPID spoofing ⏳]()
 
 
 **Driver Programming basics**
