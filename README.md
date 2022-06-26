@@ -5,8 +5,8 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Windows Binary Documentation**
 
-- [PE structure⏳]()
- - [PE Headers ⏳]()
+- [PE structure⏳](#pe-headers)
+ - [PE Headers ⏳](#pe-headers)
  - [Export Address Table (EAT) ⏳]()
   - [Resolve function address ⏳]()
     - [Using address (Obvious :D)]()
@@ -115,5 +115,11 @@ Win32 and Kernel abusing techniques for pentesters
 :skull: https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
 
 :skull: Windows Kernel Programming - Pavel Yosifovich
+<br>
+<br>
 
+## PE Headers
 
+```
+DOS_HEADER : First Header of PE, contains MS DOS message ("This programm cannot be run in DOS mode...."), MZ Header (Magic bytes to identify PE) and some stub content.
+```
