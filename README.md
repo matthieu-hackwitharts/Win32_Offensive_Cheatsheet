@@ -95,10 +95,25 @@ Win32 and Kernel abusing techniques for pentesters
  - [Scheduled Tasks ⏳]()
 - [Command line spoofing ⏳]()
 
+<br>
+<br>
+
+  
+    
+      
+       
+
+# Useful tools and Websites/Books
 
 
+**Websites/Books**
 
+:skull: https://www.ired.team/ (Awesome red team cheatsheet with great code injection notes)
 
-# Useful tools and Websites
+:skull: https://undocumented.ntinternals.net/ (Undocumented NT functions)
+
+:skull: https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
+
+:skull: Windows Kernel Programming - Pavel Yosifovich
 
 
