@@ -7,13 +7,15 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [PE structure⏳](#pe-headers)
  - [PE Headers ⏳](#pe-headers)
+ - [Parsing PE ⏳](#parsing-pe)
  - [Export Address Table (EAT) ⏳](#export-address-table)
   - [Resolve function address ⏳](#export-address-table)
     - [Using address (Obvious :D)](#export-address-table)
     - [Using ordinal number](#export-address-table)
     - [Using function name](#export-address-table)
  - [Import Address Table (IAT) ⏳](#import-address-table)
- - [Import Lookup Table (ILT) ⏳]()
+   - [Parsing IAT ⏳](#parsing-iat)
+ - [Import Lookup Table (ILT) ⏳](#import-lookup-table)
 
 
 
@@ -140,6 +142,30 @@ Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_
 
 <br>
 
+
+## Parsing PE
+
+**Simple PE parsing to retrieve IAT and ILT absolute address : **
+
+Obtain base address : GetModuleHandleA(NULL)
+
+PIMAGE_DOS_HEADER = base address, dos header
+
+PIMAGE_NT_HEADER = BaseAddress+PIMAGE_DOS_HEADER.e_lfnanew (RVA NT_HEADER)
+
+IMAGE_DATA_DIRECTORY = OptionnalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT] of PIMAGE_NT_HEADER
+
+IMAGE_IMPORT_DIRECTORY = IMAGE_DATA_DIRECTORY.VirtualAddress (RVA of IMAGE_IMPORT_DIRECTORY)
+
+IMAGE_IMPORT_DESCRIPTOR = BaseAddress + IMAGE_IMPORT_DIRECTORY.VirtualAddress (RVA du image_import_descriptor)
+
+IAT absolute address : IMAGE_IMPORT_DESCRIPTOR.FirstThunk (RVA IAT) + BaseAddress
+
+ILT absolute address : IMAGE_IMPORT_DESCRIPTOR.OriginalFirstThunk (RVA ILT) + BaseAddress
+
+<br>
+<br>
+
 ## Export Address Table
 
 - Often called "EAT"
@@ -207,11 +233,34 @@ Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_
 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
   
     DWORD	Characteristics; 
-    DWORD	OriginalFirstThunk;	//
+    DWORD	OriginalFirstThunk;	//RVA to ILT
     DWORD	TimeDateStamp;	
     DWORD	ForwarderChain;
-    DWORD	Name;
-    DWORD	FirstThunk;
+    DWORD	Name; //RVA of imported DLL name
+    DWORD	FirstThunk; //RVA to IAT
 } IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
 ```
+<br>
+<br>
+
+## Parsing IAT
+
+1) Obtain RVA of IAT 
+2) Parse trough IMPORT_DESCRIPTOR structure : Name member is the RVA of the name of current DLL
+3) To get the real DLL name : find it in ILT (originalFirstThunk+BaseAddress)
+4) To get exported functions of current DLL : PIMAGE_IMPORT_BY_NAME function_name->Name = ImageBase+AdressOfData
+
+<br>
+<br>
+
+## Import Lookup Table
+
+Every DLLs imported by PE has its own ILT.
+<br>
+```
+Absolute address of ILT = BaseAddress + OriginalFirstThunk (IAT)
+```
+
+Contains all functions name that are in imported DLL.
+
 
