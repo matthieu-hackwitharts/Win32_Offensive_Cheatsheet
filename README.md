@@ -250,6 +250,7 @@ typedef struct _IMAGE_IMPORT_DESCRIPTOR {
 3) To get the real DLL name : find it in ILT (originalFirstThunk+BaseAddress)
 4) To get exported functions of current DLL : PIMAGE_IMPORT_BY_NAME function_name->Name = ImageBase+AdressOfData
 
+Detailed code example here : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/miscellaneous/iat_parser.cpp
 <br>
 <br>
 
