@@ -11,7 +11,7 @@ int main(){
 	PIMAGE_DOS_HEADER dos_header = (PIMAGE_DOS_HEADER)baseModule;
 	PIMAGE_NT_HEADERS nt_header = (PIMAGE_NT_HEADERS)((DWORD_PTR)(baseModule)+dos_header->el_fanew);
 	IMAGE_DATA_DIRECTORY data_directory = (IMAGE_DATA_DIRECTORY)(nt_header->OptionnalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]);
-	PIMAGE_IMPORT_DESCRIPTOR import_descriptor = (PIMAGE_IMPORT_DESCRIPTOR)((DWORD_PTR)baseModule+import_directory.VirtualAddress);
+	PIMAGE_IMPORT_DESCRIPTOR import_descriptor = (PIMAGE_IMPORT_DESCRIPTOR)((DWORD_PTR)baseModule+data_directory.VirtualAddress);
 	
 	
 	while(import_descriptor->Name != NULL){
