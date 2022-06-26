@@ -7,7 +7,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [PE structure⏳](#pe-headers)
  - [PE Headers ⏳](#pe-headers)
- - [Export Address Table (EAT) ⏳]()
+ - [Export Address Table (EAT) ⏳](#export-address-table-(eat))
   - [Resolve function address ⏳]()
     - [Using address (Obvious :D)]()
     - [Using ordinal number]()
@@ -123,3 +123,24 @@ Win32 and Kernel abusing techniques for pentesters
 ```
 DOS_HEADER : First Header of PE, contains MS DOS message ("This programm cannot be run in DOS mode...."), MZ Header (Magic bytes to identify PE) and some stub content.
 ```
+
+```
+IMAGE_NT_HEADER : Contains PE file signature, File Header and Optionnal Header
+```
+
+```
+SECTION_TABLE : Contains sections headers
+```
+
+```
+SECTIONS : Not a header but useful to know : these are sections of the PE
+``` 
+<br>
+Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_fig1_259647266
+
+<br>
+
+## Export Address Table (EAT)
+
+- Resolve all functions that are exported by the PE
+- Resolve DLLs
