@@ -16,7 +16,7 @@ int main(){
 	
 	while(import_descriptor->Name != NULL){
 		
-		lib_name = (LPCSTR)import_descriptor->Name+(DWORD_PTR)baseModule
+		lib_name = (LPCSTR)import_descriptor->Name+(DWORD_PTR)baseModule;
 		HMODULE current_mod = LoadLibraryA(lib_name);
 		
 		if(current_mod != INVALID_HANDLE_VALUE){
