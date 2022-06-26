@@ -95,3 +95,10 @@ Win32 and Kernel abusing techniques for pentesters
  - [Scheduled Tasks ⏳]()
 - [Command line spoofing ⏳]()
 
+
+
+
+
+# Useful tools and Websites
+
+
