@@ -58,8 +58,8 @@ Win32 and Kernel abusing techniques for pentesters
 
 **EDR/Endpoint bypass**
 
-- [Direct syscall ⏳](#direct-syscall)
-- [High level languages ⏳]()
+- [Direct syscall ](#direct-syscall)
+- [High level languages ](#high-level-languages)
 - [Patch inline hooking ⏳]()
 - [Patch ntdll hooking ⏳]()
 - [Detect hooks ⏳]()
@@ -274,6 +274,8 @@ Sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blo
 <br>
 <br>
 
+##
+
 ## Direct Syscall
 
 Most EDR products will hook win32 api calls in user mode (PatchGuard strongly decrease kernel hooks availability). To avoid these hooks, you can directly call Nt() equivalent to your api functions.
@@ -371,5 +373,16 @@ int main()
 		0);
 
 	return 0;
-}```
+}
+```
+<br>
+<br>
+
+## High Level Languages
+
+C++/C are often more flagged by AV/EDR products than high level equivalent languages : use Go, Rust or other language to craft your best templates !
+
+<br>
+<br>
+
 
