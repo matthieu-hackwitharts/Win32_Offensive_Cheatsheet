@@ -22,7 +22,7 @@ Win32 and Kernel abusing techniques for pentesters
 **Execute some binary**
 
 - [Classic shellcode execution⏳](https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/classic.cpp)
-- [DLL execute ⏳]()
+- [DLL execute ⏳](#dll-execute)
 - [Reflective DLL execution ⏳]()
 - [RAW file to PE ⏳]()
 
@@ -263,5 +263,21 @@ Absolute address of ILT = BaseAddress + OriginalFirstThunk (IAT)
 ```
 
 Contains all functions name that are in imported DLL.
+<br>
+<br>
+
+## DLL Execute
+
+This technique had some good successful bypass rates few years ago; however, because of increasing number of EDR and other endpoint solutions, writing on disk should as possible be avoided.
+
+Sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/dll_classic.cpp
+<br>
+<br>
+
+
+
+
+
+
 
 
