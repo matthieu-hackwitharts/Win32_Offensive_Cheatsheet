@@ -5,24 +5,24 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Windows Binary Documentation**
 
-- [PE structure⏳](#pe-headers)
- - [PE Headers ⏳](#pe-headers)
- - [Parsing PE ⏳](#parsing-pe)
- - [Export Address Table (EAT) ⏳](#export-address-table)
-  - [Resolve function address ⏳](#export-address-table)
+- [PE structure](#pe-headers)
+ - [PE Headers ](#pe-headers)
+ - [Parsing PE ](#parsing-pe)
+ - [Export Address Table (EAT) ](#export-address-table)
+  - [Resolve function address ](#export-address-table)
     - [Using address (Obvious :D)](#export-address-table)
     - [Using ordinal number](#export-address-table)
     - [Using function name](#export-address-table)
- - [Import Address Table (IAT) ⏳](#import-address-table)
-   - [Parsing IAT ⏳](#parsing-iat)
- - [Import Lookup Table (ILT) ⏳](#import-lookup-table)
+ - [Import Address Table (IAT) ](#import-address-table)
+   - [Parsing IAT ](#parsing-iat)
+ - [Import Lookup Table (ILT) ](#import-lookup-table)
 
 
 
 **Execute some binary**
 
-- [Classic shellcode execution⏳](https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/classic.cpp)
-- [DLL execute ⏳](#dll-execute)
+- [Classic shellcode execution](https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/classic.cpp)
+- [DLL execute ](#dll-execute)
 - [Reflective DLL execution ⏳]()
 - [RAW file to PE ⏳]()
 
