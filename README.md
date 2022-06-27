@@ -58,7 +58,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 **EDR/Endpoint bypass**
 
-- [Direct syscall ⏳]()
+- [Direct syscall ⏳](#direct-syscall)
 - [High level languages ⏳]()
 - [Patch inline hooking ⏳]()
 - [Patch ntdll hooking ⏳]()
@@ -274,10 +274,102 @@ Sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blo
 <br>
 <br>
 
+## Direct Syscall
 
+Most EDR products will hook win32 api calls in user mode (PatchGuard strongly decrease kernel hooks availability). To avoid these hooks, you can directly call Nt() equivalent to your api functions.
 
+**Set up asm :**
+<br>
 
+```
+.code
+	SysNtCreateFile proc
+			mov r10, rcx //syscall convention
+			mov eax, 55h //syscall number : in this case it's NtCreateFile
+			syscall //call nt function
+			ret
+	SysNtCreateFile endp
+end
+```
 
+Find the right syscall number at this table : https://j00ru.vexillium.org/syscalls/nt/64/
+<br>
 
+**Provide a winapi template :**
+<br>
 
+```
+EXTERN_C NTSTATUS SysNtCreateFile(
+	PHANDLE FileHandle, 
+	ACCESS_MASK DesiredAccess, 
+	POBJECT_ATTRIBUTES ObjectAttributes, 
+	PIO_STATUS_BLOCK IoStatusBlock, 
+	PLARGE_INTEGER AllocationSize, 
+	ULONG FileAttributes, 
+	ULONG ShareAccess, 
+	ULONG CreateDisposition, 
+	ULONG CreateOptions, 
+	PVOID EaBuffer, 
+	ULONG EaLength);
+```
+<br>
+
+**Resolve Nt address :**
+<br>
+
+```
+FARPROC addr = GetProcAddress(LoadLibraryA("ntdll"), "NtCreateFile");
+```
+<br>
+
+**Use it ! (code from : https://www.ired.team/offensive-security/defense-evasion/using-syscalls-directly-from-visual-studio-to-bypass-avs-edrs)** (SysNtCreateFile instead of NtCreateFile)
+<br>
+```
+#include "pch.h"
+#include <Windows.h>
+#include "winternl.h"
+#pragma comment(lib, "ntdll")
+
+EXTERN_C NTSTATUS SysNtCreateFile(
+	PHANDLE FileHandle, 
+	ACCESS_MASK DesiredAccess, 
+	POBJECT_ATTRIBUTES ObjectAttributes, 
+	PIO_STATUS_BLOCK IoStatusBlock, 
+	PLARGE_INTEGER AllocationSize, 
+	ULONG FileAttributes, 
+	ULONG ShareAccess, 
+	ULONG CreateDisposition, 
+	ULONG CreateOptions, 
+	PVOID EaBuffer, 
+	ULONG EaLength);
+
+int main()
+{
+	FARPROC addr = GetProcAddress(LoadLibraryA("ntdll"), "NtCreateFile");
+	
+	OBJECT_ATTRIBUTES oa;
+	HANDLE fileHandle = NULL;
+	NTSTATUS status = NULL;
+	UNICODE_STRING fileName;
+	IO_STATUS_BLOCK osb;
+
+	RtlInitUnicodeString(&fileName, (PCWSTR)L"\\??\\c:\\temp\\test.txt");
+	ZeroMemory(&osb, sizeof(IO_STATUS_BLOCK));
+	InitializeObjectAttributes(&oa, &fileName, OBJ_CASE_INSENSITIVE, NULL, NULL);
+
+	SysNtCreateFile(
+		&fileHandle, 
+		FILE_GENERIC_WRITE, 
+		&oa, 
+		&osb, 
+		0, 
+		FILE_ATTRIBUTE_NORMAL, 
+		FILE_SHARE_WRITE, 
+		FILE_OVERWRITE_IF, 
+		FILE_SYNCHRONOUS_IO_NONALERT, 
+		NULL, 
+		0);
+
+	return 0;
+}```
 
