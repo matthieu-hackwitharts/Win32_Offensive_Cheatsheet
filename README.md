@@ -34,7 +34,7 @@ Win32 and Kernel abusing techniques for pentesters
 - [APC technique⏳]()
  - [Early Bird ⏳]()
 - [Reflective DLL Injection ⏳]()
-- [Dll injection ⏳]()
+- [Dll injection ⏳](#dll-injection)
 - [Process Doppelganging ⏳]()
 - [Fibers ⏳]()
 - [CreateThreadPoolWait ⏳]()
@@ -64,7 +64,7 @@ Win32 and Kernel abusing techniques for pentesters
 - [Patch ntdll hooking ⏳]()
 - [Detect hooks ⏳]()
 - [Patch ETW ⏳]()
-- [Sandbox bypass ⏳]()
+- [Sandbox bypass](#sandbox-bypass)
 - [Debugging Bypass ⏳]()
 - [Patch Kernel callbacks ⏳]()
 - [VirtualProtect techniques ⏳]()
@@ -384,5 +384,42 @@ C++/C are often more flagged by AV/EDR products than high level equivalent langu
 
 <br>
 <br>
+
+## DLL Injection
+
+You can inject some code stored in a dll in a remote process. Unfortunately, EDRs product will likely catch it easily, especially if malicious dll touch the disk.
+
+Code sample : 
+
+<br>
+<br>
+
+## Sandbox Bypass
+
+Sandbox are quite used by AV/EDRs to test some API calls and other part of code before to really execute your programm. There are several techniques to avoid this tool, here are some of them below : 
+<br>
+
+- Wait. Seriously. Such function as Sleep() or time.sleep() or equivalent will do the job, for some seconds before to execute the real shellcode.
+
+- Try to allocate lot of memory (malloc), like 100000000 bytes.
+
+- Try to detect if you are actually in a sandbox (VM) environnement : test for open process,files and others suspicious things.
+
+- Try to resolve a fake (not working) URL : many AVs products will respond with fake page.
+
+- Use strange and rarely used Api calls, like VirtualAllocExNuma(): most sandbox cannot emulate this type of call.
+
+<br>
+
+```
+IntPtr mem = VirtualAllocExNuma(GetCurrentProcess(), IntPtr.Zero, 0x1000, 0x3000, 0x4, 0);
+```
+
+<br>
+<br>
+
+
+
+
 
 
