@@ -29,7 +29,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Code injection techniques**
 
-- [CreateRemoteThread injection ⏳](#createremotethread-injection)
+- [CreateRemoteThread injection](#createremotethread-injection)
 - [Process Hollowing ⏳]()
 - [APC technique⏳]()
  - [Early Bird ⏳]()
@@ -473,6 +473,9 @@ There are so many other ways to detect any debugger, a lot of them are compiled 
 
 ## CreateRemoteThread injection
 
+Simply write your shellcode in previously allocated memory space inside the target process. (Not OPSEC)
+
+Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/create_thread_injection.cpp
 
 
 
