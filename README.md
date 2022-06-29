@@ -45,7 +45,7 @@ Win32 and Kernel abusing techniques for pentesters
 - [Complete PE injection in remote process ⏳]()
 
 **Hooking techniques**
-- [Inline hooking ⏳]()
+- [Inline hooking](#inline-hooking)
 - [IAT hooking ⏳]()
 
 
@@ -477,8 +477,16 @@ Simply write your shellcode in previously allocated memory space inside the targ
 
 Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/create_thread_injection.cpp
 
+<br>
+<br>
 
-
+ ## Inline Hooking
+ 
+ Inline hooking is the most basic way to hook a function : it simply consists to redirect the API call to your own function (jump)
+ 
+ <br>
+ 
+ Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/hooking/inline.cpp (from https://www.ired.team/offensive-security/code-injection-process-injection/how-to-hook-windows-api-using-c++)
 
 
 
