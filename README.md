@@ -49,11 +49,11 @@ Win32 and Kernel abusing techniques for pentesters
 - [IAT hooking ⏳]()
 
 
-**AV Bypass techniques (Signature based)**
+**RE Bypass techniques**
 
-- [Call and Strings obfuscation ⏳]()
-- [Manual function resolves ⏳]() 
-- [Win32 API Hashing](win32-api-hashing)
+- [Call and Strings obfuscation](#call-and-strings-obfuscation)
+- [Manual function resolve](#manual-function-resolve) 
+- [Win32 API Hashing](#win32-api-hashing)
 
 
 **EDR/Endpoint bypass**
@@ -523,5 +523,59 @@ In a real pentest, you must find any vulnerable driver and profit:)
 You can hide your API function calls by hash them with some hash algorithm (djb2 is the most used) : be careful of hash collision that are possible with some special funcs.
 
 Then combine this technique with a direct address resolving in EAT, and let reversers cry:)
+
+<br>
+<br>
+
+## Call and strings obfuscation
+
+There are several techniques you can use to hide your calls to win32 api, here are some of them : 
+
+- Use char[] array to splice your function/dll names into multiple chars
+
+<br>
+
+```
+char sWrite[] = {'W','r','i','t','e','P','r','o','c','e','s','s','M','e','m','o','r','y',0x0}; //don't forget the null byte
+```
+<br>
+
+You can even combine this trick with some ASCII char code convert.
+
+<br>
+<br>
+
+## Manual Function resolve
+
+You can manually resolve a pointer to any function of kernel32, ntdll and so more.
+
+First declare the template of your function, based on the real function header : 
+
+<br>
+
+```
+typedef HANDLE(WINAPI* myOpenProcess)(DWORD,BOOL,DWORD); //if you work directly with ntdll, use NTAPI*
+
+```
+
+<br>
+
+Then resolve a pointer to the function :
+
+<br>
+
+```
+myOpenProcess op_proc = (myOpenProcess*)GetProcAddress(LoadLibraryA("ndll.dll"),"OpenProcess"));
+op_proc(PROCESS_ALL_ACCESS,NULL,12345);
+```
+
+<br>
+
+Don't hesitate to combine this technique with some strings obfuscation to avoid passing the real func name in plaintext.
+
+<br>
+<br>
+
+
 
 
