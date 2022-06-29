@@ -29,7 +29,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Code injection techniques**
 
-- [CreateRemoteThread injection ⏳](#create-remote-thread-injection)
+- [CreateRemoteThread injection ⏳](#createremotethread-injection)
 - [Process Hollowing ⏳]()
 - [APC technique⏳]()
  - [Early Bird ⏳]()
@@ -391,7 +391,7 @@ C++/C are often more flagged by AV/EDR products than high level equivalent langu
 
 You can inject some code stored in a dll in a remote process. Unfortunately, EDRs product will likely catch it easily, especially if malicious dll touch the disk.
 
-Code sample : 
+Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/dll_injection.cpp
 
 <br>
 <br>
@@ -471,11 +471,9 @@ There are so many other ways to detect any debugger, a lot of them are compiled 
 <br>
 <br>
 
-## DLL Injection
+## CreateRemoteThread injection
 
-- Allocate a new memory space for the path of your malicious dll, then launch a remote thread calling LoadLibraryW() with this path as an argument. (Quite common)
 
-Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/dll_injection.cpp
 
 
 
