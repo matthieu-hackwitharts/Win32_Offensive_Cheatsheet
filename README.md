@@ -1,7 +1,7 @@
 # Win32_Offensive_Cheatsheet
 Win32 and Kernel abusing techniques for pentesters
 
-
+** Dev mode enabled, open to any help :)**
 
 **Windows Binary Documentation**
 
