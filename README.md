@@ -34,7 +34,7 @@ Win32 and Kernel abusing techniques for pentesters
 - [APC technique⏳]()
  - [Early Bird ⏳]()
 - [Reflective DLL Injection ⏳]()
-- [Dll injection ⏳](#dll-injection)
+- [Dll injection](#dll-injection)
 - [Process Doppelganging ⏳]()
 - [Fibers ⏳]()
 - [CreateThreadPoolWait ⏳]()
@@ -471,11 +471,11 @@ There are so many other ways to detect any debugger, a lot of them are compiled 
 <br>
 <br>
 
-## Create Remote Thread Injection
+## DLL Injection
 
-- Allocate a new memory space in a process to inject your payload. (Quite common)
+- Allocate a new memory space for the path of your malicious dll, then launch a remote thread calling LoadLibraryW() with this path as an argument. (Quite common)
 
-Code sample : 
+Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/dll_injection.cpp
 
 
 
