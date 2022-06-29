@@ -29,7 +29,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Code injection techniques**
 
-- [CreateRemoteThread injection ⏳]()
+- [CreateRemoteThread injection ⏳](#create-remote-thread-injection)
 - [Process Hollowing ⏳]()
 - [APC technique⏳]()
  - [Early Bird ⏳]()
@@ -65,7 +65,7 @@ Win32 and Kernel abusing techniques for pentesters
 - [Detect hooks ⏳]()
 - [Patch ETW ⏳]()
 - [Sandbox bypass](#sandbox-bypass)
-- [Debugging Bypass ⏳]()
+- [Debugging Bypass](#debugging-bypass)
 - [Patch Kernel callbacks ⏳]()
 - [VirtualProtect techniques ⏳]()
 - [Fresh copy unhook ⏳]()
@@ -117,6 +117,8 @@ Win32 and Kernel abusing techniques for pentesters
 :skull: https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
 
 :skull: Windows Kernel Programming - Pavel Yosifovich
+
+:skull: https://research.checkpoint.com/ (Very interesting docs about evasion, anti-debug and so more)
 <br>
 <br>
 
@@ -417,6 +419,63 @@ IntPtr mem = VirtualAllocExNuma(GetCurrentProcess(), IntPtr.Zero, 0x1000, 0x3000
 
 <br>
 <br>
+
+## Debugging Bypass
+
+Not a real AV evasion technique, but still useful to avoid being reversed too easily by RE engineers. There are so many ways to detect or make debuggers crazy, but here are some of them below : 
+
+<br>
+
+**Flags way**
+
+<br>
+
+You can use ```IsDebuggerPresent()``` (Win32) or direct call ```NtQueryInformationProcess()``` (not so very documented) to check for debug flags.
+
+**Handles way**
+
+<br>
+
+Try to close invalid (missing) handles with CloseHandle() API.
+The debugger will try to catch the exception, which can be easily detected : 
+
+<br>
+
+```
+bool Check() //https://anti-debug.checkpoint.com/techniques/object-handles.html#closehandle
+{
+    __try
+    {
+        CloseHandle((HANDLE)0xDEADBEEF);
+        return false;
+    }
+    __except (EXCEPTION_INVALID_HANDLE == GetExceptionCode()
+                ? EXCEPTION_EXECUTE_HANDLER 
+                : EXCEPTION_CONTINUE_SEARCH)
+    {
+        return true;
+    }
+}
+```
+
+<br>
+
+**ASM way**
+
+Try to make an INT 3 call (ASM) : it's an equivalent to a software breakpoint, which will trigger a debugger.
+
+<br>
+
+There are so many other ways to detect any debugger, a lot of them are compiled at : https://anti-debug.checkpoint.com/
+
+<br>
+<br>
+
+## Create Remote Thread Injection
+
+- Allocate a new memory space in a process to inject your payload. (Quite common)
+
+Code sample : 
 
 
 
