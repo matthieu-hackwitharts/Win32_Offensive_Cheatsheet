@@ -60,7 +60,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [Direct syscall ](#direct-syscall)
 - [High level languages ](#high-level-languages)
-- [Patch inline hooking ⏳]()
+- [Patch inline hooking](#patch-inline-hooking)
 - [Patch ntdll hooking ⏳]()
 - [Detect hooks ⏳]()
 - [Patch ETW ⏳]()
@@ -76,7 +76,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Driver Programming basics**
 
-- [General concepts ⏳]()
+- [General concepts](#general-concepts)
 - [Driver entry ⏳]()
 - [IO (Input/Output) ⏳]()
 - [Symlinks ⏳]()
@@ -487,6 +487,33 @@ Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatshee
  <br>
  
  Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/hooking/inline.cpp (from https://www.ired.team/offensive-security/code-injection-process-injection/how-to-hook-windows-api-using-c++)
+
+<br>
+<br>
+
+## Patch Inline Hooking
+
+Simply (re) hook your hooked functions by apply the right function call:)
+https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/hooking/inline.cpp
+
+
+
+## Driver Basics
+
+<br>
+
+## General Concepts
+
+Driver are used to execute code in kernel mode rather than in user mode.
+It is a powerful technique to bypass all usermode hooks and monitoring which were set by AV/EDRs.
+
+It can be also used to bypass kernel callbacks and other kernel monitoring.
+
+The code of any driver must be verified (any warning should be treated as an error) to ensure it will be crash-free (You don't want to cause BSOD during pentest, right ?).
+
+Few years ago, Microsoft decided to ban unsigned drivers from his operating system : you must disable it before to load your own driver, or use any vulnerability (like https://github.com/hmnthabit/CVE-2018-19320-LPE) to disable driver signing.
+
+In a real pentest, you must find any vulnerable driver and profit:)
 
 
 
