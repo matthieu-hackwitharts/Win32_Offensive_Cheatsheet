@@ -53,7 +53,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 - [Call and Strings obfuscation ⏳]()
 - [Manual function resolves ⏳]() 
-- [Win32 API Hashing ⏳]()
+- [Win32 API Hashing](win32-api-hashing)
 
 
 **EDR/Endpoint bypass**
@@ -515,6 +515,13 @@ Few years ago, Microsoft decided to ban unsigned drivers from his operating syst
 
 In a real pentest, you must find any vulnerable driver and profit:)
 
+<br>
+<br>
 
+## Win32 API Hashing
+
+You can hide your API function calls by hash them with some hash algorithm (djb2 is the most used) : be careful of hash collision that are possible with some special funcs.
+
+Then combine this technique with a direct address resolving in EAT, and let reversers cry:)
 
 
