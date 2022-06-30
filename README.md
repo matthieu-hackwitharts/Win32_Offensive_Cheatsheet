@@ -67,7 +67,7 @@ Win32 and Kernel abusing techniques for pentesters
 - [Sandbox bypass](#sandbox-bypass)
 - [Debugging Bypass](#debugging-bypass)
 - [Patch Kernel callbacks ⏳]()
-- [VirtualProtect techniques ⏳]()
+- [VirtualProtect technique](#virtualprotect-technique)
 - [Fresh copy unhook ⏳]()
 - [Hell's Gate ⏳]()
 - [Heaven's Gate ⏳]()
@@ -575,6 +575,14 @@ Don't hesitate to combine this technique with some strings obfuscation to avoid 
 
 <br>
 <br>
+
+## VirtualProtect technique
+
+By using some tricks with VirtualProtect() you can easily avoid been flagged in-memory : change between PAGE_EXECUTE_READWRITE and PAGE_READWRITE (less suspicious) to avoid triggering your favorite AV.
+
+<br>
+<br>
+
 
 
 
