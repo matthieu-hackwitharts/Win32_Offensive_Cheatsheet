@@ -124,7 +124,7 @@ Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_
 
 ### Parsing PE
 
-**Simple PE parsing to retrieve IAT and ILT absolute address : **
+**Simple PE parsing to retrieve IAT and ILT absolute address:**
 
 - **Obtain base address** : `GetModuleHandleA(NULL);`
 - **PIMAGE_DOS_HEADER** = base address, dos header
@@ -132,7 +132,6 @@ Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_
 - **IMAGE_DATA_DIRECTORY** = `OptionnalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]` of PIMAGE_NT_HEADER
 - **IMAGE_IMPORT_DIRECTORY** = `IMAGE_DATA_DIRECTORY.VirtualAddress` (RVA of IMAGE_IMPORT_DIRECTORY)
 - **IMAGE_IMPORT_DESCRIPTOR** = `BaseAddress + IMAGE_IMPORT_DIRECTORY.VirtualAddress` (RVA of IMAGE_IMPORT_DESCRIPTOR)
-
 - **IAT absolute address** : IMAGE_IMPORT_DESCRIPTOR.FirstThunk (RVA IAT) + BaseAddress
 - **ILT absolute address** : IMAGE_IMPORT_DESCRIPTOR.OriginalFirstThunk (RVA ILT) + BaseAddress
 
