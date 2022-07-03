@@ -46,7 +46,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 **Hooking techniques**
 - [Inline hooking](#inline-hooking)
-- [IAT hooking ⏳]()
+- [IAT hooking](#iat-hooking)
 
 
 **RE Bypass techniques**
@@ -77,7 +77,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 **Driver Programming basics**
 
 - [General concepts](#general-concepts)
-- [Driver entry ⏳]()
+- [Driver entry](#driver-entry)
 - [IO (Input/Output) ⏳]()
 - [Symlinks ⏳]()
 - [Communicate with driver ⏳]()
@@ -97,10 +97,10 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
  - [Scheduled Tasks ⏳]()
 - [Command line spoofing ⏳]()
 
- 
-       
 
-# Useful tools and Websites/Books/Cheatsheet
+# Windows Binary Documentation
+
+## Useful tools and Websites/Books/Cheatsheet
 
 - :skull: https://www.ired.team/ (Awesome red team cheatsheet with great code injection notes)
 - :skull: https://undocumented.ntinternals.net/ (Undocumented NT functions)
@@ -109,9 +109,9 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - :skull: https://research.checkpoint.com/ (Very interesting docs about evasion, anti-debug and so more)
 - :skull: https://github.com/RistBS/Awesome-RedTeam-Cheatsheet/ (Very Good Cheatsheet)
 
-# PE Structure
+## PE Structure
 
-## PE Headers
+### PE Headers
 
 - `DOS_HEADER` : First Header of PE, contains MS DOS message ("This programm cannot be run in DOS mode...."), MZ Header (Magic bytes to identify PE) and some stub content.
 - `IMAGE_NT_HEADER` : Contains PE file signature, File Header and Optionnal Header
@@ -122,7 +122,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_fig1_259647266
 
 
-## Parsing PE
+### Parsing PE
 
 **Simple PE parsing to retrieve IAT and ILT absolute address : **
 
@@ -137,7 +137,7 @@ Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_
 - **ILT absolute address** : IMAGE_IMPORT_DESCRIPTOR.OriginalFirstThunk (RVA ILT) + BaseAddress
 
 
-## Export Address Table
+### Export Address Table
 
 - Often called "EAT"
 - Resolve all functions that are exported by the PE
@@ -160,13 +160,14 @@ Details : https://www.researchgate.net/figure/PE-structure-of-normal-executable_
     }
 ```
  
- ## Resolve function address
+### Resolve function address
  
- **Using function address**
+
+**Using function address**
  
- What do you wait ? Find this function !
+What do you wait ? Find this function !
  
- **Using ordinal number**
+**Using ordinal number**
  
 An ordinal number is an **index position** to the corresponding function address in AddressOfFunctions array. It can be used to **retrieve the correct address of function**, like below : 
  
@@ -448,4 +449,49 @@ op_proc(PROCESS_ALL_ACCESS,NULL,12345);
 By using some tricks with `VirtualProtect()` you can easily avoid been flagged in-memory : change between `PAGE_EXECUTE_READWRITE` and `PAGE_READWRITE` (less suspicious) to avoid triggering your favorite AV.
 
 
-# Réferences
+## Driver Entry
+
+Driver entry proc is defined as below : 
+
+<br>
+
+```
+#include <ntddk.h>
+NTSTATUS
+DriverEntry(
+	_In_ PDRIVER_OBJECT DriverObject,
+	_In_ PUNICODE_STRING RegistryPath)
+{
+	return STATUS_SUCCESS;
+}
+```
+
+<br>
+
+It is very important to use UNREFERENCED_PARAMETER() macro on two parameters (DriverObject and RegistryPath), unless they are referenced by adding some code later.
+
+<br>
+
+
+```
+UNREFERENCED_PARAMETER(DriverObject);
+UNREFERENCED_PARAMETER(RegistryPath);
+```
+
+<br>
+<br>
+
+## IAT Hooking
+
+By modifying the corresponding function address to a pointer on your own function, you can make the programm executing your own code.
+
+It can be done by following several steps : 
+
+- Find the relative address of IAT
+- Parse the IAT to find the function you want to hook
+- Replace this function address ("patch") with the adress of your function
+- Enjoy
+
+<br>
+
+Code sample : 
