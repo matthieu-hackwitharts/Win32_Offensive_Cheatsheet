@@ -348,7 +348,7 @@ Simply (re) hook your hooked functions by apply the right function call: https:/
 
 
 
-## Driver Basics
+# Driver Basics
 
 ## General Concepts
 
@@ -363,9 +363,30 @@ Few years ago, Microsoft decided to ban unsigned drivers from his operating syst
 
 In a real pentest, you must find any vulnerable driver and profit:)
 
+
+## Driver Entry
+
+- Driver entry proc is defined as below : 
+```cpp
+#include <ntddk.h>
+NTSTATUS
+DriverEntry(
+	_In_ PDRIVER_OBJECT DriverObject,
+	_In_ PUNICODE_STRING RegistryPath)
+{
+	return STATUS_SUCCESS;
+}
+```
+
+It is very important to use `UNREFERENCED_PARAMETER()` macro on `DriverObject` and `RegistryPath` parameters, unless they are referenced by adding some code later.
+```cpp
+UNREFERENCED_PARAMETER(DriverObject);
+UNREFERENCED_PARAMETER(RegistryPath);
+```
+
 ## Win32 API Hashing
 
-You can hide your API function calls by hash them with some hash algorithm (djb2 is the most used) : be careful of hash collision that are possible with some special funcs.
+You can hide your API function calls by hash them with some hash algorithm (djb2 is the most used), be careful of hash collision that are possible with some special funcs.
 
 Then combine this technique with a direct address resolving in EAT, and let reversers cry :)
 
@@ -404,37 +425,7 @@ op_proc(PROCESS_ALL_ACCESS,NULL,12345);
 By using some tricks with `VirtualProtect()` you can easily avoid been flagged in-memory : change between `PAGE_EXECUTE_READWRITE` and `PAGE_READWRITE` (less suspicious) to avoid triggering your favorite AV.
 
 
-## Driver Entry
 
-Driver entry proc is defined as below : 
-
-<br>
-
-```
-#include <ntddk.h>
-NTSTATUS
-DriverEntry(
-	_In_ PDRIVER_OBJECT DriverObject,
-	_In_ PUNICODE_STRING RegistryPath)
-{
-	return STATUS_SUCCESS;
-}
-```
-
-<br>
-
-It is very important to use UNREFERENCED_PARAMETER() macro on two parameters (DriverObject and RegistryPath), unless they are referenced by adding some code later.
-
-<br>
-
-
-```cpp
-UNREFERENCED_PARAMETER(DriverObject);
-UNREFERENCED_PARAMETER(RegistryPath);
-```
-
-<br>
-<br>
 
 ## IAT Hooking
 
