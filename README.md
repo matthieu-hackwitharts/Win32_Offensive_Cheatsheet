@@ -46,7 +46,7 @@ Win32 and Kernel abusing techniques for pentesters
 
 **Hooking techniques**
 - [Inline hooking](#inline-hooking)
-- [IAT hooking ⏳]()
+- [IAT hooking](#iat-hooking)
 
 
 **RE Bypass techniques**
@@ -77,7 +77,7 @@ Win32 and Kernel abusing techniques for pentesters
 **Driver Programming basics**
 
 - [General concepts](#general-concepts)
-- [Driver entry ⏳]()
+- [Driver entry](#driver-entry)
 - [IO (Input/Output) ⏳]()
 - [Symlinks ⏳]()
 - [Communicate with driver ⏳]()
@@ -582,6 +582,55 @@ By using some tricks with VirtualProtect() you can easily avoid been flagged in-
 
 <br>
 <br>
+
+## Driver Entry
+
+Driver entry proc is defined as below : 
+
+<br>
+
+```
+#include <ntddk.h>
+
+NTSTATUS
+DriverEntry(
+	_In_ PDRIVER_OBJECT DriverObject,
+	_In_ PUNICODE_STRING RegistryPath)
+{
+	return STATUS_SUCCESS;
+}
+```
+
+<br>
+
+It is very important to use UNREFERENCED_PARAMETER() macro on two parameters (DriverObject and RegistryPath), unless they are referenced by adding some code later.
+
+<br>
+
+
+```
+UNREFERENCED_PARAMETER(DriverObject);
+UNREFERENCED_PARAMETER(RegistryPath);
+```
+
+<br>
+<br>
+
+## IAT Hooking
+
+By modifying the corresponding function address to a pointer on your own function, you can make the programm executing your own code.
+
+It can be done by following several steps : 
+
+- Find the relative address of IAT
+- Parse the IAT to find the function you want to hook
+- Replace this function address ("patch") with the adress of your function
+- Enjoy
+
+<br>
+
+Code sample : 
+
 
 
 
