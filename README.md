@@ -247,7 +247,7 @@ end
 > Find the right syscall number at this table : https://j00ru.vexillium.org/syscalls/nt/64/
 
 
-- Provide a winapi template
+- Build the Function Prototype using `NTSTATUS`
 ```cpp
 EXTERN_C NTSTATUS SysNtCreateFile(
 	PHANDLE FileHandle, 
@@ -281,22 +281,17 @@ You can inject some code stored in a dll in a remote process. Unfortunately, EDR
 
 ## Sandbox Bypass
 
-Sandbox are quite used by AV/EDRs to test some API calls and other part of code before to really execute your programm. There are several techniques to avoid this tool, here are some of them below : 
-<br>
+Sandbox are quite used by AV/EDRs to test some API calls and other part of code before to really execute your programm. There are several techniques to avoid this tool, here are some of them below :
 
-- Wait. Seriously. Such function as Sleep() or time.sleep() or equivalent will do the job, for some seconds before to execute the real shellcode.
+- Wait. Seriously. Such function as `Sleep()` or `time.sleep()` or equivalent will do the job, for some seconds before to execute the real shellcode.
 - Try to allocate lot of memory (malloc), like 100000000 bytes.
 - Try to detect if you are actually in a sandbox (VM) environnement : test for open process,files and others suspicious things.
 - Try to resolve a fake (not working) URL : many AVs products will respond with fake page.
-
-
-- Use strange and rarely used Api calls, like VirtualAllocExNuma(): most sandbox cannot emulate this type of call.
+- Use strange and rarely used Api calls, like `VirtualAllocExNuma()` most sandbox cannot emulate this type of call.
 ```cpp
 IntPtr mem = VirtualAllocExNuma(GetCurrentProcess(), IntPtr.Zero, 0x1000, 0x3000, 0x4, 0);
 ```
 
-<br>
-<br>
 
 ## Debugging Bypass
 
@@ -433,7 +428,7 @@ It is very important to use UNREFERENCED_PARAMETER() macro on two parameters (Dr
 <br>
 
 
-```
+```cpp
 UNREFERENCED_PARAMETER(DriverObject);
 UNREFERENCED_PARAMETER(RegistryPath);
 ```
