@@ -102,12 +102,12 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 ## Useful tools and Websites/Books/Cheatsheet
 
-- :skull: https://github.com/RistBS/Awesome-RedTeam-Cheatsheet/ (Very Good Cheatsheet)
-- :skull: https://www.ired.team/ (Awesome red team cheatsheet with great code injection notes)
-- :skull: https://undocumented.ntinternals.net/ (Undocumented NT functions)
-- :skull: https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
-- :skull: [Windows Kernel Programming - Pavel Yosifovich](https://www.amazon.fr/Windows-Kernel-Programming-Pavel-Yosifovich/dp/1977593372)
-- :skull: https://research.checkpoint.com/ (Very interesting docs about evasion, anti-debug and so more)
+- 🔹 https://github.com/RistBS/Awesome-RedTeam-Cheatsheet/ (Very Good Cheatsheet)
+- 🔹 https://www.ired.team/ (Awesome red team cheatsheet with great code injection notes)
+- 🔹 https://undocumented.ntinternals.net/ (Undocumented NT functions)
+- 🔹 https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
+- 🔹 [Windows Kernel Programming - Pavel Yosifovich](https://www.amazon.fr/Windows-Kernel-Programming-Pavel-Yosifovich/dp/1977593372)
+- 🔹 https://research.checkpoint.com/ (Very interesting docs about evasion, anti-debug and so more)
 
 ## PE Structure
 
