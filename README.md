@@ -102,12 +102,12 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 ## Useful tools and Websites/Books/Cheatsheet
 
+- :skull: https://github.com/RistBS/Awesome-RedTeam-Cheatsheet/ (Very Good Cheatsheet)
 - :skull: https://www.ired.team/ (Awesome red team cheatsheet with great code injection notes)
 - :skull: https://undocumented.ntinternals.net/ (Undocumented NT functions)
 - :skull: https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
 - :skull: [Windows Kernel Programming - Pavel Yosifovich](https://www.amazon.fr/Windows-Kernel-Programming-Pavel-Yosifovich/dp/1977593372)
 - :skull: https://research.checkpoint.com/ (Very interesting docs about evasion, anti-debug and so more)
-- :skull: https://github.com/RistBS/Awesome-RedTeam-Cheatsheet/ (Very Good Cheatsheet)
 
 ## PE Structure
 
@@ -262,48 +262,12 @@ EXTERN_C NTSTATUS SysNtCreateFile(
 	PVOID EaBuffer, 
 	ULONG EaLength);
 ```
-- Resolve Nt address
+- Resolve the NT address
 ```cpp
 FARPROC addr = GetProcAddress(LoadLibraryA("ntdll"), "NtCreateFile");
 ```
-- Use it !
-```
-#include "pch.h"
-#include <Windows.h>
-#include "winternl.h"
-#pragma comment(lib, "ntdll")
 
-EXTERN_C NTSTATUS SysNtCreateFile(
-	PHANDLE FileHandle, 
-	ACCESS_MASK DesiredAccess, 
-	POBJECT_ATTRIBUTES ObjectAttributes, 
-	PIO_STATUS_BLOCK IoStatusBlock, 
-	PLARGE_INTEGER AllocationSize, 
-	ULONG FileAttributes, 
-	ULONG ShareAccess, 
-	ULONG CreateDisposition, 
-	ULONG CreateOptions, 
-	PVOID EaBuffer, 
-	ULONG EaLength);
-
-int main()
-{
-	FARPROC addr = GetProcAddress(LoadLibraryA("ntdll"), "NtCreateFile");
-	
-	OBJECT_ATTRIBUTES oa;
-	HANDLE fileHandle = NULL;
-	NTSTATUS status = NULL;
-	UNICODE_STRING fileName;
-	IO_STATUS_BLOCK osb;
-
-	RtlInitUnicodeString(&fileName, (PCWSTR)L"\\??\\c:\\temp\\test.txt");
-	ZeroMemory(&osb, sizeof(IO_STATUS_BLOCK));
-	InitializeObjectAttributes(&oa, &fileName, OBJ_CASE_INSENSITIVE, NULL, NULL);
-
-	SysNtCreateFile(&fileHandle, FILE_GENERIC_WRITE, &oa, &osb, 0, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_WRITE, FILE_OVERWRITE_IF, FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
-	return 0;
-}
-```
+> Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/evasion/direct_syscall.cpp
 
 ## High Level Languages
 
@@ -313,10 +277,7 @@ C++/C are often more flagged by AV/EDR products than high level equivalent langu
 
 You can inject some code stored in a dll in a remote process. Unfortunately, EDRs product will likely catch it easily, especially if malicious dll touch the disk.
 
-Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/dll_injection.cpp
-
-<br>
-<br>
+> Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/dll_injection.cpp
 
 ## Sandbox Bypass
 
