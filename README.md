@@ -24,7 +24,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Classic shellcode execution](https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/classic.cpp)
 - [DLL execute ](#dll-execute)
 - [Reflective DLL execution ⏳]()
-- [RAW file to PE ⏳]()
+- [RAW file to PE](#raw-file-to-pe)
 
 
 **Code injection techniques**
@@ -106,6 +106,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - 🔹 https://docs.microsoft.com/en-us/windows/win32/api/ (Microsoft Official Doc)
 - 🔹 [Windows Kernel Programming - Pavel Yosifovich](https://www.amazon.fr/Windows-Kernel-Programming-Pavel-Yosifovich/dp/1977593372)
 - 🔹 https://research.checkpoint.com/ (Very interesting docs about evasion, anti-debug and so more)
+- 🔹 https://www.vx-underground.org/ (Awesome content about malware dev and reverse)
 
 ## PE Structure
 
@@ -479,4 +480,18 @@ CreateClose(
 
 Complete sample code here : //
 
+## Raw File To PE
+
+You can execute some raw binary file in memory by allocate its size space in a  memory region :
+
+```cpp
+HANDLE binfile = CreateFileA("myfile.bin",GENERIC_READ,NULL,NULL,OPEN_EXISTING,NULL,NULL);
+SIZE_T size = GetFileSize(binfile,NULL);
+LPVOID buffer=NULL;
+ReadFile(binfile,buffer,size,NULL,NULL);
+HANDLE hProc = GetCurrentProcess();
+
+CreateRemoteThread(hProc, NULL, 0, (LPTHREAD_START_ROUTINE)buffer, NULL, 0, NULL);
+CloseHandle(hProc);
+```
 
