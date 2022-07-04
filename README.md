@@ -61,7 +61,6 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Direct syscall ](#direct-syscall)
 - [High level languages ](#high-level-languages)
 - [Patch inline hooking](#patch-inline-hooking)
-- [Patch ntdll hooking ⏳]()
 - [Detect hooks ⏳]()
 - [Patch ETW ⏳]()
 - [Sandbox bypass](#sandbox-bypass)
@@ -78,8 +77,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 - [General concepts](#general-concepts)
 - [Driver entry](#driver-entry)
-- [IO (Input/Output) ⏳]()
-- [Symlinks ⏳]()
+- [Input Output)](#input-output)
 - [Communicate with driver ⏳]()
 - [Client code to kernel code ⏳]()
 - [Driver signing (Microsoft) ⏳]()
@@ -448,3 +446,37 @@ Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatshee
 Avoid hooks by replacing the "hooked" ntdll by a fresh one, directly mapped from the disk.
 
 Code sample : //à ajouter
+
+## Input Output
+
+Use MajorFunction IRP_MJ_CREATE and IRP_MJ_CLOSE to act as "interrupt" to communicate with your driver from client-side.
+
+```cpp
+DriverObject->MajorFunction[IRP_MJ_CREATE] = CreateClose;
+	DriverObject->MajorFunction[IRP_MJ_CLOSE] = CreateClose;
+```
+
+Then define your CreateClose function : 
+
+```cpp
+NTSTATUS
+CreateClose(
+	_In_ PDEVICE_OBJECT DeviceObject,
+	_In_ PIRP Irp)
+{
+	UNREFERENCED_PARAMETER(DeviceObject);
+
+	DbgPrint("[+] Hello from FirstDriver CreateClose\n");
+
+	Irp->IoStatus.Status = STATUS_SUCCESS;
+	Irp->IoStatus.Information = 0;
+
+	IoCompleteRequest(Irp, IO_NO_INCREMENT);
+
+	return STATUS_SUCCESS;
+}
+```
+
+Complete sample code here : //
+
+
