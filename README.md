@@ -68,7 +68,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Debugging Bypass](#debugging-bypass)
 - [Patch Kernel callbacks ⏳]()
 - [VirtualProtect technique](#virtualprotect-technique)
-- [Fresh copy unhook ⏳]()
+- [Fresh copy unhook](#fresh-copy-unhook)
 - [Hell's Gate ⏳]()
 - [Heaven's Gate ⏳]()
 - [PPID spoofing ⏳]()
@@ -441,3 +441,10 @@ It can be done by following several steps :
 <br>
 
 Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/hooking/iat.cpp
+
+
+## Fresh Copy Unhook
+
+Avoid hooks by replacing the "hooked" ntdll by a fresh one, directly mapped from the disk.
+
+Code sample : //à ajouter
