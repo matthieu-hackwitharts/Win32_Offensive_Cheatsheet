@@ -440,4 +440,4 @@ It can be done by following several steps :
 
 <br>
 
-Code sample : 
+Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/hooking/iat.cpp
