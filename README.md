@@ -69,7 +69,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [VirtualProtect technique](#virtualprotect-technique)
 - [Fresh copy unhook](#fresh-copy-unhook)
 - [Hell's Gate ⏳]()
-- [Heaven's Gate ⏳]()
+- [Heaven's Gate](#heaven's-gate)
 - [PPID spoofing ⏳]()
 
 
@@ -494,4 +494,10 @@ HANDLE hProc = GetCurrentProcess();
 CreateRemoteThread(hProc, NULL, 0, (LPTHREAD_START_ROUTINE)buffer, NULL, 0, NULL);
 CloseHandle(hProc);
 ```
+
+## Heaven's Gate
+
+Use Wow64 to inject 64 bits payload in 32 bits loader. Can be useful to bypass some AV/EDRs because Wow64 will avoid you to be catch in userland.
+
+The most known version of this technique has been created by the MSF team, see their awesome work here : https://github.com/rapid7/metasploit-framework/blob/21fa8a89044220a3bf335ed77293300969b81e78/external/source/shellcode/windows/x86/src/migrate/executex64.asm
 
