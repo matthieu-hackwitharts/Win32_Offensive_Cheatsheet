@@ -78,9 +78,8 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [General concepts](#general-concepts)
 - [Driver entry](#driver-entry)
 - [Input Output)](#input-output)
-- [Communicate with driver ⏳]()
-- [Client code to kernel code ⏳]()
-- [Driver signing (Microsoft) ⏳]()
+- [Communicate with driver](#communicate-with-the-driver)
+- [Driver signing (Microsoft)](#driver-signing)
 
 **Offensive Driver Programming**
 
@@ -500,4 +499,31 @@ CloseHandle(hProc);
 Use Wow64 to inject 64 bits payload in 32 bits loader. Can be useful to bypass some AV/EDRs because Wow64 will avoid you to be catch in userland.
 
 The most known version of this technique has been created by the MSF team, see their awesome work here : https://github.com/rapid7/metasploit-framework/blob/21fa8a89044220a3bf335ed77293300969b81e78/external/source/shellcode/windows/x86/src/migrate/executex64.asm
+
+
+## Communicate with the driver
+
+```
+User-mode applications send IOCTLs to drivers by calling DeviceIoControl, which is described in Microsoft Windows SDK documentation. Calls to DeviceIoControl cause the I/O manager to create an IRP_MJ_DEVICE_CONTROL request and send it to the topmost driver (https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/introduction-to-i-o-control-codes)
+```
+
+The userland app must use DeviceIoControl (ioapiset.h) function to communicate with a driver.
+It will be used to send various requests to its **Device** object.
+
+Simple sample code here : //todo
+
+## Driver signing
+
+As described in [General concepts](#general-concepts) section, drivers must be signed before to install on a Windows system. Despite the fact you must use some driver or kernel exploit to bypass it (Gigabyte driver CVE for example), you can still disable it manually :
+
+```
+bcdedit.exe -set loadoptions DISABLE_INTEGRITY_CHECKS
+```
+
+```
+bcdedit.exe -set TESTSIGNING ON
+```
+
+Then restart your computer;obviously you need local admin rights on the machine you want to execute these command. As a restart is needed, **this not opsec at all**.
+
 
