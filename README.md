@@ -83,7 +83,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 **Offensive Driver Programming**
 
-- [Process protection removing ⏳]()
+- [Process protection removing](#process-protection-removing)
 - [Patch kernel callback (dev way) ⏳]()
 - [Integrity and privileges levels ⏳]()
 - [Enable SeDebug privilege ⏳]()
@@ -92,7 +92,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 - [Persistence ⏳]()
  - [Scheduled Tasks ⏳]()
-- [Command line spoofing ⏳]()
+- [Command line spoofing](#command-line-spoofing)
 
 
 # Windows Binary Documentation
@@ -559,3 +559,17 @@ int main()
 	return 0;
 }
 ```
+
+
+## Process Protection Removing
+
+A **protected process** have the "protected" mode enable in the kernel : using the PPL (Protected Process Light) technology, it can be protected from various things like code injection, memory dump, etc. You can enable it for lsass to avoid password dumping by modifying some reg keys.
+
+To remove this protection, you must load some malicious driver.
+
+Code sample : //
+
+
+## Command Line Spoofing
+
+
