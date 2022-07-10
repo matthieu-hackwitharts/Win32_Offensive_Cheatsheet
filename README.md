@@ -575,6 +575,13 @@ Code sample : //
 To avoid using hardcoded syscalls, Hell's Gate (Hells Gates ?) retrieve them dynamically by parsing EAT (compare memory bytes to syscall opcodes). The original Poc has been made by the great VX-Underground team, and can be found here : https://papers.vx-underground.org/papers/Windows/Evasion%20-%20Systems%20Call%20and%20Memory%20Evasion/Dynamically%20Retrieving%20SYSCALLs%20-%20Hells%20Gate.7z
 
 
+## Command Line Spoofing
+
+Works perfectly even with sysmon/process hacker monitoring; it enables the ability to hide your command args, which can be useful in pentest/red team ops (```powershell -enc .....```)
+
+To achieve that objective, you can spawn a new process with "legit" command args in supended mode, then edit these args directly in PEB.
+
+Poc : https://github.com/NVISOsecurity/blogposts/blob/master/examples-commandlinespoof/Example%203%20-%20CMD%20spawn%20with%20fake%20procexp%20args/code.cpp
 
 
 
