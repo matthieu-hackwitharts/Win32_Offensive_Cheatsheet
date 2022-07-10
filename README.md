@@ -68,7 +68,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Patch Kernel callbacks ⏳]()
 - [VirtualProtect technique](#virtualprotect-technique)
 - [Fresh copy unhook](#fresh-copy-unhook)
-- [Hell's Gate ⏳]()
+- [Hell's Gate](#hells-gate)
 - [Heaven's Gate](#heavens-gate)
 - [PPID spoofing](#ppid-spoofing)
 
@@ -570,6 +570,11 @@ To remove this protection, you must load some malicious driver.
 Code sample : //
 
 
-## Command Line Spoofing
+## Hells Gate
+
+To avoid using hardcoded syscalls, Hell's Gate (Hells Gates ?) retrieve them dynamically by parsing EAT (compare memory bytes to syscall opcodes). The original Poc has been made by the great VX-Underground team, and can be found here : https://papers.vx-underground.org/papers/Windows/Evasion%20-%20Systems%20Call%20and%20Memory%20Evasion/Dynamically%20Retrieving%20SYSCALLs%20-%20Hells%20Gate.7z
+
+
+
 
 
