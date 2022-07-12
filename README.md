@@ -30,7 +30,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 **Code injection techniques**
 
 - [CreateRemoteThread injection](#createremotethread-injection)
-- [Process Hollowing ⏳]()
+- [Process Hollowing](#process-hollowing)
 - [APC technique⏳]()
  - [Early Bird ⏳]()
 - [Reflective DLL Injection ⏳]()
@@ -41,7 +41,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Thread Hijacking ⏳]()
 - [MapView code injection ⏳]()
 - [Module Stomping ⏳]()
-- [Function Stomping ⏳]()
+- [Function Stomping](#function-stomping)
 - [Complete PE injection in remote process ⏳]()
 
 **Hooking techniques**
@@ -93,6 +93,15 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Persistence ⏳]()
  - [Scheduled Tasks ⏳]()
 - [Command line spoofing](#command-line-spoofing)
+
+<br>
+
+
+# Malware/Sophisticated techniques
+
+- [Case of Emotet : PPID Spoofing using WMI](#emotet-ppid-spoofing)
+
+<br>
 
 
 # Windows Binary Documentation
@@ -583,5 +592,30 @@ To achieve that objective, you can spawn a new process with "legit" command args
 
 Poc : https://github.com/NVISOsecurity/blogposts/blob/master/examples-commandlinespoof/Example%203%20-%20CMD%20spawn%20with%20fake%20procexp%20args/code.cpp
 
+## Function Stomping
 
+Simply replace the original function address (obtained with GetProcAddress) with the new one. This technique is well detailed by his author : https://idov31.github.io/2022-01-28-function-stomping/
+
+## Process Hollowing
+
+Process Hollowing is made in several steps : 
+
+- Create the targeted process ("hollowed" one) in suspended mode : it is needed to modify it
+
+- Unmap the targeted process from its PEB (You must declare this structure first)
+
+- Write the content of the new exe in this process : headers + content
+
+- Parse and apply relocation table 
+
+- Let the process continue to run in its thread
+
+- Enjoy
+
+Complete POC can be found here : https://www.ired.team/offensive-security/code-injection-process-injection/process-hollowing-and-pe-image-relocations
+
+
+## Emotet PPID Spoofing 
+
+This technique has been discovered in the well-known malware Emotet. To spawn a new powershell process (intented to execute some payload), it use the COM api with a WMI instance. With this trick, the powershell process is spawning as a child process of the WMIPrvSE process, which far less suspicious than be spawning by a suspicious exe or even a Word file.
 
