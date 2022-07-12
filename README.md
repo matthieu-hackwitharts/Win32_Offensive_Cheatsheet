@@ -617,5 +617,5 @@ Complete POC can be found here : https://www.ired.team/offensive-security/code-i
 
 ## Emotet PPID Spoofing 
 
-This technique has been discovered in the well-known malware Emotet. To spawn a new powershell process (intented to execute some payload), it use the COM api with a WMI instance. With this trick, the powershell process is spawning as a child process of the WMIPrvSE process, which far less suspicious than be spawning by a suspicious exe or even a Word file.
+This technique has been discovered in the well-known malware Emotet. To spawn a new powershell process (intented to execute some payload), it use the COM api with a WMI instance. With this trick, the powershell process is spawned as a child process of the WMIPrvSE process, which far less suspicious than be spawning by a suspicious exe or even a Word file.
 
