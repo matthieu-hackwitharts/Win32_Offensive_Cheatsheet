@@ -620,7 +620,7 @@ Complete POC can be found here : https://www.ired.team/offensive-security/code-i
 
 Inject your shellcode in all available threads in a process, then use ```QueueUserAPC()``` function to query an APC call. This technique can not be reliable when there are no many threads in the compromised process.
 
-Sample code : 
+Sample code : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/apc.cpp
 
 ## Emotet PPID Spoofing 
 
