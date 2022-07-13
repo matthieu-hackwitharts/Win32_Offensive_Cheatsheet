@@ -36,7 +36,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Reflective DLL Injection ⏳]()
 - [Dll injection](#dll-injection)
 - [Process Doppelganging ⏳]()
-- [Fibers ⏳]()
+- [Fibers](#fibers)
 - [CreateThreadPoolWait ⏳]()
 - [Thread Hijacking ⏳]()
 - [MapView code injection ⏳]()
@@ -621,6 +621,13 @@ Complete POC can be found here : https://www.ired.team/offensive-security/code-i
 Inject your shellcode in all available threads in a process, then use ```QueueUserAPC()``` function to query an APC call. This technique can not be reliable when there are no many threads in the compromised process.
 
 Sample code : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/apc.cpp
+
+## Fibers
+
+Fibers can be defined as ```cooperatively scheduled threads (https://nullprogram.com/blog/2019/03/28/)```. It allows the main program to execute the shellcode trough this new thread type. 
+
+Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/fiber.cpp
+
 
 ## Emotet PPID Spoofing 
 
