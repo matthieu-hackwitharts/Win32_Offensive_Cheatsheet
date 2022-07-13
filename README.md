@@ -31,7 +31,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 - [CreateRemoteThread injection](#createremotethread-injection)
 - [Process Hollowing](#process-hollowing)
-- [APC technique⏳]()
+- [APC Queue technique](#apc-queue-technique)
  - [Early Bird ⏳]()
 - [Reflective DLL Injection ⏳]()
 - [Dll injection](#dll-injection)
@@ -100,6 +100,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 # Malware/Sophisticated techniques
 
 - [Case of Emotet : PPID Spoofing using WMI](#emotet-ppid-spoofing)
+- [Zeus malware hidden files technique](#zeus-malware-hidden-files)
 
 <br>
 
@@ -615,7 +616,39 @@ Process Hollowing is made in several steps :
 Complete POC can be found here : https://www.ired.team/offensive-security/code-injection-process-injection/process-hollowing-and-pe-image-relocations
 
 
+## APC Queue Technique
+
+Inject your shellcode in all available threads in a process, then use ```QueueUserAPC()``` function to query an APC call. This technique can not be reliable when there are no many threads in the compromised process.
+
+Sample code : 
+
 ## Emotet PPID Spoofing 
 
 This technique has been discovered in the well-known malware Emotet. To spawn a new powershell process (intented to execute some payload), it use the COM api with a WMI instance. With this trick, the powershell process is spawned as a child process of the WMIPrvSE process, which far less suspicious than be spawning by a suspicious exe or even a Word file.
 
+## Zeus Malware Hidden Files
+
+The well-know Zeus malware use some quite ingenious trick to hide its logs (keystrokes, password ,etc) in the compromised system. It hooks the ```NtQueryDirectoryFile()``` function to filter displayed results.
+
+```cpp
+typedef struct _FILE_NAMES_INFORMATION {
+ ULONG NextEntryOffset;
+ ULONG FileIndex;
+ ULONG FileNameLength;
+ WCHAR FileName[1];
+} FILE_NAMES_INFORMATION, *PFILE_NAMES_INFORMATION;
+
+ if (file_matches)
+ {
+
+ // Check for end of list
+ if (pCurrentFileNames->NextEntryOffset == 0)
+ {
+ // Hide current file
+ if (pPrev)
+ pPrevFileNames->NextEntryOffset = 0;
+ else
+ return STATUS_NO_SUCH_FILE; 
+ ```
+ 
+ Source : https://ioactive.com/pdfs/ZeusSpyEyeBankingTrojanAnalysis.pdf
