@@ -32,7 +32,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [CreateRemoteThread injection](#createremotethread-injection)
 - [Process Hollowing](#process-hollowing)
 - [APC Queue technique](#apc-queue-technique)
- - [Early Bird ⏳]()
+ - [Early Bird](#early-bird)
 - [Reflective DLL Injection ⏳]()
 - [Dll injection](#dll-injection)
 - [Process Doppelganging ⏳]()
@@ -628,6 +628,12 @@ Fibers can be defined as ```cooperatively scheduled threads (https://nullprogram
 
 Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/fiber.cpp
 
+
+## Early Bird
+
+Similar to APC Queue injection, here the APC call must be set in a suspended process. The created process main thread is then resume; the main advantage of this technique is that avoiding writing the shellcode in a running process will be less detected by AV/EDRs.
+
+Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/earlybird.cpp
 
 ## Emotet PPID Spoofing 
 
