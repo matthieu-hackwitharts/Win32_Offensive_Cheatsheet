@@ -101,6 +101,9 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 - [Case of Emotet : PPID Spoofing using WMI](#emotet-ppid-spoofing)
 - [Zeus malware hidden files technique](#zeus-malware-hidden-files)
+- [SpyEye keyloger hooking technique](#spyeye-keyloger-hooking-technique)
+- [Most ridiculous malware stop (WannaCry)](#wannacry-killswitch)
+
 
 <br>
 
@@ -665,3 +668,17 @@ typedef struct _FILE_NAMES_INFORMATION {
  ```
  
  Source : https://ioactive.com/pdfs/ZeusSpyEyeBankingTrojanAnalysis.pdf
+ 
+ 
+ ## SpyEye keyloger hooking technique
+ 
+ SpyEye malware hooks ```TranslateMessage()``` function to save keystrokes : the hook procedure use ```GetKeyboardState``` function to add the typed char to a 20000 bytes buffer.
+ 
+ Source : https://ioactive.com/pdfs/ZeusSpyEyeBankingTrojanAnalysis.pdf
+ 
+ ## Wannacry KillSwitch
+ 
+ Wannacry ransomware used a killswitch URL which was resolved before the execution of the main payload. After this domaine has been registred, all wannacry samples has been disabled. This technique was related here : https://www.malwaretech.com/2017/05/how-to-accidentally-stop-a-global-cyber-attacks.html
+ Fun fact: this domain was in clear string, without any obfuscation. Quite funny:)
+ 
+ 
