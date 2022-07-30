@@ -35,7 +35,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
  - [Early Bird](#early-bird)
 - [Reflective DLL Injection ⏳]()
 - [Dll injection](#dll-injection)
-- [Process Doppelganging ⏳]()
+- [Process Doppelganging](#process-doppelganging)
 - [Fibers](#fibers)
 - [CreateThreadPoolWait ⏳]()
 - [Thread Hijacking ⏳]()
@@ -62,7 +62,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [High level languages ](#high-level-languages)
 - [Patch inline hooking](#patch-inline-hooking)
 - [Detect hooks ⏳]()
-- [Patch ETW ⏳]()
+- [Patch ETW](#patch-etw)
 - [Sandbox bypass](#sandbox-bypass)
 - [Debugging Bypass](#debugging-bypass)
 - [Patch Kernel callbacks ⏳]()
@@ -637,6 +637,24 @@ Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatshee
 Similar to APC Queue injection, here the APC call must be set in a suspended process. The created process main thread is then resume; the main advantage of this technique is that avoiding writing the shellcode in a running process will be less detected by AV/EDRs.
 
 Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/earlybird.cpp
+
+## Patch ETW
+
+ETW (```Event Tracing for Windows```) is a logging low-level API which can be used for debugging/logging kernel and usermode process. It has been first implemented in Windows 2000, but realtime monitoring is really available since Windows XP.
+
+ETW API is available from headers files provided by Microsoft : https://docs.microsoft.com/fr-fr/windows/win32/api/_etw/
+
+In a pentest operation, you should care about this functionality by patching it : the most used way is to write arbitrary ```ret``` opcodes into the ETW event writing function (```EtwEventWrite```) to avoid logs be writing somewhere.
+
+Code sample : 
+
+## Process Doppelganging
+
+Process Doppelganging was until a few years an untected method of launching your own payload into some tricky way. It has been demonstrated at BlackHat 2017 by Tal Liberman and Eugene Kogan, see their amazing work : https://www.youtube.com/watch?v=Cch8dvp836w
+
+It is an "intermediate" step before the process hollowing technique : the PE image is indeed overwrited before to get executed, so the WindowsLoader make the Process Hollowing for us (so cool, right ?).
+
+Hasherezade has maked some cool POC of this technique, availabe here : https://github.com/hasherezade/process_doppelganging
 
 ## Emotet PPID Spoofing 
 
