@@ -23,7 +23,6 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 
 - [Classic shellcode execution](https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/classic.cpp)
 - [DLL execute ](#dll-execute)
-- [Reflective DLL execution ⏳]()
 - [RAW file to PE](#raw-file-to-pe)
 
 
@@ -33,7 +32,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Process Hollowing](#process-hollowing)
 - [APC Queue technique](#apc-queue-technique)
  - [Early Bird](#early-bird)
-- [Reflective DLL Injection ⏳]()
+- [Reflective DLL Injection](#reflective-dll-injection)
 - [Dll injection](#dll-injection)
 - [Process Doppelganging](#process-doppelganging)
 - [Fibers](#fibers)
@@ -42,7 +41,6 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [MapView code injection ⏳]()
 - [Module Stomping ⏳]()
 - [Function Stomping](#function-stomping)
-- [Complete PE injection in remote process ⏳]()
 
 **Hooking techniques**
 - [Inline hooking](#inline-hooking)
@@ -76,6 +74,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 **Driver Programming basics**
 
 - [General concepts](#general-concepts)
+- [SSDT](#ssdt)
 - [Driver entry](#driver-entry)
 - [Input Output)](#input-output)
 - [Communicate with driver](#communicate-with-the-driver)
@@ -618,6 +617,13 @@ Process Hollowing is made in several steps :
 
 Complete POC can be found here : https://www.ired.team/offensive-security/code-injection-process-injection/process-hollowing-and-pe-image-relocations
 
+## Reflective DLL Injection
+
+As with the "static" dll injection (by using dll file), you can inject your own DLL in most processes by reflecting it in memory. It has the advantage to easily bypass some AV/EDrs products despite it's a quite flagged way today.
+
+You must first allocate memory and do some reloc work to make it works.
+
+The well-knowned Poc about this technique was published by stephenfewer : https://github.com/stephenfewer/ReflectiveDLLInjection
 
 ## APC Queue Technique
 
@@ -655,6 +661,42 @@ Process Doppelganging was until a few years an untected method of launching your
 It is an "intermediate" step before the process hollowing technique : the PE image is indeed overwrited before to get executed, so the WindowsLoader make the Process Hollowing for us (so cool, right ?).
 
 Hasherezade has maked some cool POC of this technique, availabe here : https://github.com/hasherezade/process_doppelganging
+
+
+## SSDT
+
+SSDT, or System Service Dispatch Table is a table (obvious) which can resolve by its current index the corresponding Nt function. When any usermode call is made, it is resolved as below : 
+
+- ```OpenProcess``` (Win32 API function is called)
+
+- ```NtOpenProcess``` (Resolved in ntdll.dll)
+
+```asm
+mov r10,rcx
+mov eax,26 
+syscall
+ret
+```
+(ntdll contains system call procedures for each Nt function)
+
+- 26 is the **service system number** : it is an index in the SSDT that resolves the address of the kernel NtOpenProcess function.
+
+- Kernelmode NtOpenProcess is called, and communicate with I/O as a part of a driver.
+
+SSDT is defined in a **Service Descriptor Table** :
+
+```cpp
+typedef struct tagSERVICE_DESCRIPTOR_TABLE {
+    SYSTEM_SERVICE_TABLE nt; //effectively a pointer to Service Dispatch Table (SSDT) itself
+    SYSTEM_SERVICE_TABLE win32k;
+    SYSTEM_SERVICE_TABLE sst3; //pointer to a memory address that contains how many routines are defined in the table
+    SYSTEM_SERVICE_TABLE sst4;
+} SERVICE_DESCRIPTOR_TABLE;
+```
+
+SSDT is/was often hooked by rootkits as it was possible to modify the corresponding address to their own functions. **Patchguard** has disabled this possibility, unless in case of some internal vulnerability. 
+
+Many antivirus products are also using this trick today, probably by using the same techniques than evil hackers;)
 
 ## Emotet PPID Spoofing 
 
