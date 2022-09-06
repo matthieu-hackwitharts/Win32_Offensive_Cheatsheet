@@ -1,3 +1,5 @@
+// https://github.com/xforcered/Detect-Hooks/blob/main/src/detect-hooks.c
+
 #include <windows.h>
 #include <stdio.h>
 
