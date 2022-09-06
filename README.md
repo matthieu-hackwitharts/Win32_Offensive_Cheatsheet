@@ -42,7 +42,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Direct syscall ](#direct-syscall)
   - [High level languages ](#high-level-languages)
   - [Patch inline hooking](#patch-inline-hooking)
-  - [Detect hooks ⏳]()
+  - [Detect hooks](#detect-hooks)
   - [Patch ETW](#patch-etw)
   - [Sandbox bypass](#sandbox-bypass)
   - [Debugging Bypass](#debugging-bypass)
@@ -410,7 +410,33 @@ C++/C are often more flagged by AV/EDR products than high level equivalent langu
 
 Simply (re) hook your hooked functions by apply the right function call: https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/hooking/inline.cpp
 
-## Detect hooks ⏳
+## Detect hooks
+
+To detect hooks, you'll first get the base address of the NTDLL with `LoadLibrary`, then you will parse the PE headers to locate EAT (IMAGE_EXPORT_DIRECTORY) and its offsets which will contain all the important information (exported functions + name). just resolve function names & addresses while iterating through exported functions and apply the following `if` statements to sort functions
+
+- sort functions to get only Nt or Zw functions
+```c
+if (strncmp(functionName, (char*)"Nt", 2) == 0 || strncmp(functionName, (char*)"Zw", 2) == 0) { // ... }
+```
+
+> **⚠️** : some functions are false positive I recommand you to detect them :
+```c
+        if (strncmp(functionName, (char*)"NtGetTickCount", 14) == 0 ||
+             strncmp(functionName, (char*)"NtQuerySystemTime", 17) == 0 ||
+              strncmp(functionName, (char*)"NtdllDefWindowProc_A", 20) == 0 ||
+               strncmp(functionName, (char*)"NtdllDefWindowProc_W", 20) == 0 ||
+                strncmp(functionName, (char*)"NtdllDialogWndProc_A", 20) == 0 ||
+                 strncmp(functionName, (char*)"NtdllDialogWndProc_W", 20) == 0 ||
+                  strncmp(functionName, (char*)"ZwQuerySystemTime", 17) == 0) { }
+```
+
+- for the last `if` statement, check if the first 4 bytes of `functionName` is equal to `mov r10, rcx; mov eax, ##` which is the beginning of the syscall stub
+```c
+if (memcmp(functionAddress, syscallPrologue, 4) != 0) { // ... }
+```
+
+> Code sample: https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/tree/main/evasion/detect_hooks.c
+
 
 ## Patch ETW
 
