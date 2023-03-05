@@ -59,9 +59,10 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Input Output)](#input-output)
   - [Communicate with driver](#communicate-with-the-driver)
   - [Driver signing (Microsoft)](#driver-signing)
+  - [Custom callbacks (ObRegisterCallbacks)](#custom-callbacks)
 - [Offensive Driver Programming](#offensive-driver-programming)
   - [Process protection removing](#process-protection-removing)
-  - [Patch kernel callback (dev way) ⏳]()
+  - [Patch kernel callback ⏳]()
   - [Integrity and privileges levels ⏳]()
   - [Enable SeDebug privilege ⏳]()
 - [Using Win32 API to increase OPSEC](#using-win32-api-to-increase-opsec)
@@ -715,7 +716,7 @@ It will be used to send various requests to its **Device** object.
 
 Simple sample code here : //todo
 
-## Driver signing (Microsoft)
+## Driver signing
 
 As described in [General concepts](#general-concepts) section, drivers must be signed before to install on a Windows system. Despite the fact you must use some driver or kernel exploit to bypass it (Gigabyte driver CVE for example), you can still disable it manually:
 ```powershell
@@ -723,6 +724,46 @@ bcdedit.exe -set loadoptions DISABLE_INTEGRITY_CHECKS
 bcdedit.exe -set TESTSIGNING ON
 ```
 Then restart your computer. Obviously you need local admin rights on the machine you want to execute these command. As a restart is needed, **this not OPSEC at all**.
+
+
+## Custom Callbacks
+
+ObRegisterCallbacks (wdm.h) allow you to defined "custom" callbacks that can be used to modify behavior of a usermode app when being triggered by a specific operation, like CreateProcess/OpenProcess (Handle create).
+
+Basically, Ob Callbacks are defined with a OB_OPERATION_REGISTRATION array, which will be filled with OB_CALLBACK_REGISTRATION struct (filled with callbacks).
+
+Example to trigger on OpenProcess/CreateProcess :
+
+```c
+OB_OPERATION_REGISTRATION obOperationRegistrationArray[1] = { 0 };
+OB_CALLBACK_REGISTRATION obCallbackRegistration = { 0 };
+
+obOperationRegistrationArray[0].ObjectType = PsProcessType; //monitor for handles
+obOperationRegistrationArray[0].Operations = OB_OPERATION_HANDLE_CREATE | OB_OPERATION_HANDLE_DUPLICATE; //detect created and duplicated handles
+obOperationRegistrationArray[0].PreOperation = process_ob_pre_op_callbacks; //intercept before the end of the operation with a pointer to a defined function in your own code
+obOperationRegistrationArray[0].PostOperation = NULL; //do nothing after the operation has been completed
+
+NTSTATUS status_register = ObRegisterCallbacks(&obCallbackRegistration, &reg_handle); //register callbacks
+	if (!NT_SUCCESS(status_register)) {
+		DbgPrint("[-] Error while trying to register callbacks\n");
+	}
+	else {
+
+		DbgPrint("[+] Registering callbacks !\n");
+	}
+```
+
+**process_ob_pre_op_callbacks** is a user defined function which will be called when the the callback will be intercepted, and therefore can disallow or allow the operation.
+
+```c
+OB_PREOP_CALLBACK_STATUS process_ob_pre_op_callbacks(PVOID registrationContext, POB_PRE_OPERATION_INFORMATION pObPreOperationInformation) {
+
+	if (pObPreOperationInformation->KernelHandle) return OB_PREOP_SUCCESS; //if handle is a kernel handle, pass
+	pObPreOperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~My_PROCESS_ALL_ACCESS; //remove PROCESS_ALL_ACCESS from handle
+}
+```
+
+**Note** : My_PROCESS_ALL_ACCESS can be defined as ```#define My_PROCESS_ALL_ACCESS (0x1FFFFF)``` (win32 hexa code).
 
 
 # Offensive Driver Programming
