@@ -61,9 +61,8 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Driver signing (Microsoft)](#driver-signing)
   - [Custom callbacks (ObRegisterCallbacks)](#custom-callbacks)
 - [Offensive Driver Programming](#offensive-driver-programming)
-  - [Process protection removing](#process-protection-removing)
   - [Patch kernel callback ⏳]()
-  - [Integrity and privileges levels ⏳]()
+  - [Patch protected process](#patch-protected-process)
   - [Enable SeDebug privilege ⏳]()
 - [Using Win32 API to increase OPSEC](#using-win32-api-to-increase-opsec)
   - [Persistence ⏳]()
@@ -768,20 +767,37 @@ OB_PREOP_CALLBACK_STATUS process_ob_pre_op_callbacks(PVOID registrationContext, 
 
 # Offensive Driver Programming
 
-## Process protection removing
-
-A **protected process** have the "protected" mode enable in the kernel : using the PPL (Protected Process Light) technology, it can be protected from various things like code injection, memory dump, etc. You can enable it for lsass to avoid password dumping by modifying some reg keys.
-
-To remove this protection, you must load some malicious driver.
-
-Code sample : //
-
 ## Patch kernel callback (dev way) ⏳
 
-## Integrity and privileges levels ⏳
+## Patch Protected Process
 
-## Enable SeDebug privilege ⏳
+Protected Processes were introduced with Windows Vista. It can be defined as a struct named EPROCESS (undefined : https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/eprocess) which define if the process is protected or not with three interesting members : 
 
+```
+kd> dt nt!_EPROCESS
+   +0x000 Pcb              : _KPROCESS
+   +0x2d8 ProcessLock      : _EX_PUSH_LOCK
+   +0x2e0 UniqueProcessId  : Ptr64 Void
+   [...snip...]
+   +0x6c8 SignatureLevel   : UChar //signature integrity of exe
+   +0x6c9 SectionSignatureLevel : UChar //Second member : same as first for DLL loaded by the exe
+   +0x6ca Protection       : _PS_PROTECTION
+```
+The third member (Protection) is a PS_PROTECTION struct which is defined as below :
+
+```
+_PS_PROTECTION
+  +0x000 Level            : UChar
+  +0x000 Type             : Pos 0, 3 Bits
+  +0x000 Audit            : Pos 3, 1 Bit
+  +0x000 Signer           : Pos 4, 4 Bits
+```
+
+To remove PPL protection, you must set SignatureLevel,SectionSignatureLevel and Protection to 0.
+
+As the offset between EPROCESS base address and PS_PROTECTION is 0x6c8, you can retrieve it by additionate the two values.
+
+Example code : //todo
 
 
 # Using Win32 API to increase OPSEC
