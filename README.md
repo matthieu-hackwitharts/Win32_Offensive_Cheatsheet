@@ -13,6 +13,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
    - [Import Address Table (IAT) ](#import-address-table-iat)
      - [Parsing IAT ](#parsing-iat)
    - [Import Lookup Table (ILT) ](#import-lookup-table)
+   - [Enable SeDebug privilege](#enable-sedebug-privilege)
 - [Execute some binary](#execute-some-binary)
   - [Classic shellcode execution](#classic-shellcode-execution)
   - [DLL execute ](#dll-execute)
@@ -50,7 +51,6 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Hell's Gate](#hells-gate)
   - [Heaven's Gate](#heavens-gate)
   - [PPID spoofing](#ppid-spoofing)
-  - [Patch Kernel callbacks ⏳]()
   - [Heap & Stack Encryption ⏳]()
 - [Driver Programming basics](#driver-programming-basics)
   - [General concepts](#general-concepts)
@@ -61,9 +61,8 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Driver signing (Microsoft)](#driver-signing)
   - [Custom callbacks (ObRegisterCallbacks)](#custom-callbacks)
 - [Offensive Driver Programming](#offensive-driver-programming)
-  - [Patch kernel callback ⏳]()
+  - [Patch kernel callback](#patch-kernel-callback)
   - [Patch protected process](#patch-protected-process)
-  - [Enable SeDebug privilege ⏳]()
 - [Using Win32 API to increase OPSEC](#using-win32-api-to-increase-opsec)
   - [Persistence ⏳]()
     - [Scheduled Tasks ⏳]()
@@ -194,6 +193,36 @@ Absolute address of ILT = BaseAddress + OriginalFirstThunk (IAT)
 It contains all functions name that are in imported DLL.
 
 <br>
+
+
+## Enable SeDebug Privilege
+
+The **SeDebug** privilege is the "most wanted" priv in all the Windows privileges list. It allow you to "debug" any authorized process, which can be translated as several offensives actions, like opening a handle with ```PROCESS_ALL_ACCESS``` privileges.
+
+To enable it in usermode, you will need to use a function such as : 
+
+```cpp
+void EnableDebugPriv()
+{
+    HANDLE hToken;
+    LUID luid;
+    TOKEN_PRIVILEGES tkp;
+
+    OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken);
+
+    LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid);
+
+    tkp.PrivilegeCount = 1;
+    tkp.Privileges[0].Luid = luid;
+    tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+    AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), NULL, NULL);
+
+    CloseHandle(hToken); 
+}
+```
+
+This function will open your current process token, then adjust it to **SE_PRIVILEGE_ENABLED** privilege, wich is corresponding to the target privilege.
 
 # Execute some binary
 
@@ -769,7 +798,48 @@ OB_PREOP_CALLBACK_STATUS process_ob_pre_op_callbacks(PVOID registrationContext, 
 
 # Offensive Driver Programming
 
-## Patch kernel callback (dev way) ⏳
+## Patch kernel callback
+
+Kernel Callbacks were introduced by Microsoft mainly to offer a better way to AVs/EDRs editors to monitor and prevent suspicious actions (Before them, lot of security products were using kernel mode patching like SSDT hooks to do the same job, but the new PatchGuard protection constrained them to use this new solution).
+
+They are several types of kernel callbacks, especially : 
+
+	- ProcessNotify : called when a process is created or exits.
+	- ThreadNotify : called when a thread is created or exits (is deleted).
+	- LoadImageNotify : called when some executable image is loaded by an other exe (example : DLL loaded by a process)
+
+Each of them has its associated function, such as **PsSetCreateProcessNotifyRoutineEx** to set them in your driver. The latter register a callback routine as a new process is created or deleted in the Windows system. Its prototype is defined as below : 
+
+```cpp
+NTSTATUS PsSetCreateProcessNotifyRoutineEx(
+  [in] PCREATE_PROCESS_NOTIFY_ROUTINE_EX NotifyRoutine,
+  [in] BOOLEAN                           Remove
+);
+```
+
+**PCREATE_PROCESS_NOTIFY_ROUTINE_EX** is a pointer to the callback routine which will be called when the event will be triggered (here, process created/exits).
+**Remove** is a simple flag which indicate if PsSetCreateProcessNotify will register the callback function or delete it (useful in your driver's cleanup function).
+
+The callback function will use this prototype : 
+
+```cpp
+void OnProcessNotify(
+    PEPROCESS Process,
+    HANDLE ProcessId,
+    PPS_CREATE_NOTIFY_INFO CreateInfo
+);
+```
+where **Process** is the current process being created/deleted, **ProcessId** is the id of this process, and **CreateInfo** is a structure that contains various info about this process.
+
+When a driver registers a new callback routine, its address will be stored in an array usually named **Psp**name_of_your_callback. For example, the list of all ProcessNotifyRoutine functions is stored in the **PspCreateProcessNotifyRoutine** array.
+
+To remove such callbacks, you will simply need to empty this array !
+
+Unfortunately, the address of this so exciting array does not have any direct way to be retrieved. Fortunately, they are many ways to do so manually, by searching for some specific offsets in memory.
+
+Once you find the right address, you can enumerate all callbacks registered and filter them by driver name (Sysmon driver maybe ?:)), and only remove the corresponding callback functions in the list.
+
+
 
 ## Patch Protected Process
 
