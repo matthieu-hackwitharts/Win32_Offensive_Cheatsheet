@@ -31,6 +31,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Thread Hijacking](#thread-hijacking)
   - [MapView code injection ⏳]()
   - [Function Stomping](#function-stomping)
+  - [Module Stomping](#module-stomping)
 - [Hooking techniques](#hooking-techniques)
   - [Inline hooking](#inline-hooking)
   - [IAT hooking](#iat-hooking)
