@@ -675,7 +675,7 @@ NtSetInformationProcess( hProcess, ProcessInstrumentationCallback, &Instrumentat
 ```
 > it's still "undocumented" by microsoft but [Alex Ionescu](https://twitter.com/aionescu) has documented it [here](https://www.youtube.com/watch?v=pHyWyH804xE&ab_channel=S%C3%A9bastienDuquette) and Everdox has also done so [here](https://www.codeproject.com/Articles/543542/Windows-x64-system-service-hooks-and-advanced-debu)
 
-> Full code to bypass instrumentation here : 
+> Full code to bypass instrumentation here : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/evasion/disable_instrumentation_callback.c
 
 ## Heap Encryption
 
