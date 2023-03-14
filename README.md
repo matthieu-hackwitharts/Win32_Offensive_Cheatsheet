@@ -71,8 +71,8 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
   - [Command line spoofing](#command-line-spoofing)
 - [Misc Stuff](#misc-stuff)
   - [x64 Calling Convention](#x64-calling-convention)
-  - [Indirect Execution]()
-    - [CFG Bypass with SetProcessValidCallTargets]()
+  - [Indirect Execution](#indirect-execution)
+    - [CFG Bypass with SetProcessValidCallTargets](cfg-bypass-with-setprocesscalidcalltargets)
 
 <br>
 
