@@ -73,7 +73,7 @@ Win32 and Kernel abusing techniques for pentesters & red-teamers made by [@UVisi
 - [Misc Stuff](#misc-stuff)
   - [x64 Calling Convention](#x64-calling-convention)
   - [Indirect Execution](#indirect-execution)
-    - [CFG Bypass with SetProcessValidCallTargets](cfg-bypass-with-setprocessvalidcalltargets)
+    - [CFG Bypass with SetProcessValidCallTargets](#cfg-bypass-with-setprocessvalidcalltargets)
 
 <br>
 
