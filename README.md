@@ -319,9 +319,6 @@ threads (https://nullprogram.com/blog/2019/03/28/)```. It allows the main progra
 
 > Code sample : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/fiber.cpp
 
-## CreateThreadPoolWait ⏳
-
-## Thread Hijacking ⏳
 
 ## MapView code injection
 
