@@ -323,7 +323,11 @@ threads (https://nullprogram.com/blog/2019/03/28/)```. It allows the main progra
 
 ## Thread Hijacking ⏳
 
-## MapView code injection ⏳
+## MapView code injection
+
+This technique allow you to share a view of a memory section in your malicious process with another remote process, which will execute your shellcode stored in this view. It can be done by using NtCreateSection/NtMapViewOfSection, avoiding you to use heavily monitored proc like WriteProcessMemory() or VirtualAlloc() (however, NtMapViewOfSection can be also monitored).
+
+
 
 ## Module Stomping
 
