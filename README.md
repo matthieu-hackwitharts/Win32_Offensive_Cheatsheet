@@ -327,6 +327,8 @@ threads (https://nullprogram.com/blog/2019/03/28/)```. It allows the main progra
 
 This technique allow you to share a view of a memory section in your malicious process with another remote process, which will execute your shellcode stored in this view. It can be done by using NtCreateSection/NtMapViewOfSection, avoiding you to use heavily monitored proc like WriteProcessMemory() or VirtualAlloc() (however, NtMapViewOfSection can be also monitored).
 
+Code example : https://github.com/matthieu-hackwitharts/Win32_Offensive_Cheatsheet/blob/main/shellcode_samples/mapview_injection.cpp
+
 
 
 ## Module Stomping
