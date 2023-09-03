@@ -141,6 +141,7 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
 		DWORD AddressOfNameOrdinals; // Pointer array contains address of ordinal number of functions (index in AddressOfFunctions)
 } IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;   
 ```
+ Please note that the EAT is defined in a DLL, not in a "real" PE (a PE will use the EAT of a loaded dll to resolve pointers to functions it want to use).
  
 ### Resolve function address
 
@@ -165,7 +166,7 @@ The Nth element in AddressOfNames array corresponding to the Nth element in Addr
 
 ## Import Address Table (IAT)
 
-- The PE loader doesn't know what address is corresponding to which function (again more with ASLR) : Let's call IAT to save us 
+- The PE loader doesn't know what address is corresponding to which function : let's call IAT to save us 
 - Defined in IMAGE_IMPORT_DIRECTORY struct:
 ```c
 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
@@ -177,6 +178,7 @@ typedef struct _IMAGE_IMPORT_DESCRIPTOR {
     DWORD	FirstThunk;             // RVA to IAT
 } IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
 ```
+As a summary, the IAT is a table which contains pointers to several functions that are imported by the PE from loaded DLL (ntdll, kernel32...).
 
 ## Parsing IAT
 
@@ -853,6 +855,8 @@ OB_PREOP_CALLBACK_STATUS process_ob_pre_op_callbacks(PVOID registrationContext, 
 ```
 
 **Note** : My_PROCESS_ALL_ACCESS can be defined as ```#define My_PROCESS_ALL_ACCESS (0x1FFFFF)``` (win32 hexa code).
+
+**How to patch ObCallbacks :** there are several ways to patch them, but the probably two most common ways to achieve this goal would be to write an obcallback function with some schema like : "nop-nop-nop-ret", or erase the obcallback function pointer from _CALLBACK_ENTRY_ITEM items. Please note that these techniques can actually trigger PatchGuard, so please pay attention while using these techniques in a real engagement.
 
 
 # Offensive Driver Programming
